@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大甲手搖抽抽樂 V10.4 🥤</title>
+    <title>大甲手搖抽抽樂 V11.0 🥤</title>
     <style>
         /* --- 1. 全域與背景設定 --- */
         body {
@@ -107,42 +107,30 @@
         }
         .draw-btn:disabled { background: #e0e0e0; color: #aaa; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* --- 5. 結果顯示區 (排版修正重點區域) --- */
+        /* --- 5. 結果顯示區 --- */
         .result-box-container {
-            background: rgba(255, 255, 255, 0.9); /* 稍微不透明一點，讓文字更清楚 */
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 25px; padding: 25px 15px; margin-bottom: 30px;
             box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
             border: 2px solid rgba(255,255,255,0.8);
             min-height: 160px; 
-            /* ⚠️ 強制垂直排列，避免左右亂跑 */
             display: flex; flex-direction: column; 
             justify-content: center; align-items: center;
             overflow: hidden; position: relative;
         }
         
         #shop-name { 
-            /* 調整字體大小，避免長名字換行太醜 */
-            font-size: 2.0rem; 
-            font-weight: 900; 
-            color: #e73c7e; 
-            margin: 0 0 10px 0; /* 下方留空隙 */
-            line-height: 1.3;
+            font-size: 2.0rem; font-weight: 900; color: #e73c7e; 
+            margin: 0 0 10px 0; line-height: 1.3;
             text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
-            word-break: keep-all; /* 盡量不切斷中文字 */
+            word-break: keep-all; 
         }
         
         #shop-desc { 
-            font-size: 1rem; 
-            color: #e65100; /* 深橘色文字 */
-            font-weight: bold; 
-            display: none;
-            
-            /* 標籤樣式 (Badge Style) */
-            background-color: #fff3e0; /* 淺橘底色 */
-            padding: 8px 20px;
-            border-radius: 50px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            white-space: nowrap; /* 不讓祝賀詞換行 */
+            font-size: 1rem; color: #e65100; font-weight: bold; display: none;
+            background-color: #fff3e0; padding: 8px 20px;
+            border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            white-space: nowrap; 
         }
 
         /* 擲筊動畫 */
@@ -179,15 +167,31 @@
             cursor: zoom-in; border: 2px solid transparent; transition: border 0.2s;
         }
         .menu-img:hover { border: 2px solid #23a6d5; }
-        .click-hint { font-size: 0.9rem; color: #888; margin-bottom: 20px; display: block; }
-        .menu-link {
-            display: block; text-decoration: none;
-            color: #fff; font-weight: bold; font-size: 1.1rem;
-            padding: 15px; background: linear-gradient(90deg, #e73c7e, #ee7752);
-            border-radius: 50px; box-shadow: 0 5px 20px rgba(231, 60, 126, 0.4);
-            transition: transform 0.2s;
+        .click-hint { font-size: 0.9rem; color: #888; margin-bottom: 10px; display: block; }
+        
+        /* 動作按鈕群組 */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
         }
-        .menu-link:hover { transform: translateY(-3px); }
+
+        .menu-link, .share-btn {
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none; color: #fff; font-weight: bold; font-size: 1rem;
+            padding: 12px; border-radius: 50px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s; cursor: pointer; border: none;
+        }
+        .menu-link { background: linear-gradient(90deg, #e73c7e, #ee7752); }
+        .share-btn.line { background: #06c755; } /* LINE 綠色 */
+        .share-btn.copy { background: #546e7a; } /* 複製 灰藍色 */
+        
+        .menu-link:hover, .share-btn:hover { transform: translateY(-3px); opacity: 0.9; }
+        
+        /* 讓 Google Maps 按鈕橫跨兩欄 */
+        .menu-link.full-width { grid-column: span 2; }
 
         .modal {
             display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; 
@@ -237,7 +241,14 @@
             <div style="text-align: left; font-size: 0.9rem; color: #666; margin-bottom: 10px; font-weight: bold;">👇 菜單請參考：</div>
             <img id="menu-img" class="menu-img" src="" alt="菜單讀取中" onclick="openModal()">
             <span class="click-hint">👆 點擊圖片可放大查看</span>
-            <a id="map-link" href="#" target="_blank" class="menu-link">📍 Google Maps 導航去買</a>
+            
+            <div class="action-buttons">
+                <a id="map-link" href="#" target="_blank" class="menu-link full-width">📍 Google Maps 導航</a>
+                
+                <button class="share-btn line" onclick="shareToLine()">💬 LINE 揪團</button>
+                
+                <button class="share-btn copy" onclick="copyResult()">📋 複製文字</button>
+            </div>
         </div>
     </div>
 
@@ -252,7 +263,6 @@
             const container = document.getElementById('floating-bg');
             const numItems = 50; 
             
-            // 圖片資源 (回復均等機率)
             const imageAssets = [
                 { src: './images/deco-taro.png', alt: '🍠' },          
                 { src: './images/deco-bubbletea.png', alt: '🧋' },
@@ -265,20 +275,17 @@
                 let decoItem;
 
                 if (rand < 0.2) { 
-                    // CSS 珍珠
                     decoItem = document.createElement('div');
                     decoItem.className = 'boba';
                     const size = Math.random() * 31.5 + 22.5 + 'px'; 
                     decoItem.style.width = size; decoItem.style.height = size;
                 } else if (rand < 0.4) {
-                    // CSS 櫻花瓣
                     decoItem = document.createElement('div');
                     decoItem.className = 'sakura-petal';
                     const w = Math.random() * 18 + 22.5 + 'px'; 
                     const h = Math.random() * 18 + 31.5 + 'px'; 
                     decoItem.style.width = w; decoItem.style.height = h;
                 } else {
-                    // 圖片裝飾 (隨機選)
                     const randomImg = imageAssets[Math.floor(Math.random() * imageAssets.length)];
                     decoItem = document.createElement('img');
                     decoItem.src = randomImg.src; 
@@ -331,6 +338,7 @@
         ];
 
         let isRitualRunning = false;
+        let currentWinner = null; // 儲存目前的結果供分享使用
 
         function startRitual() {
             if (isRitualRunning) return;
@@ -380,7 +388,7 @@
 
         function finalizeDraw() {
             const finalIndex = Math.floor(Math.random() * shops.length);
-            const winner = shops[finalIndex];
+            currentWinner = shops[finalIndex]; // 儲存結果
 
             const textArea = document.getElementById('text-area');
             const nameDisplay = document.getElementById('shop-name');
@@ -393,19 +401,23 @@
 
             textArea.style.display = "flex";
             
-            nameDisplay.textContent = winner.name;
+            nameDisplay.textContent = currentWinner.name;
             nameDisplay.style.color = "#e73c7e"; 
             nameDisplay.style.textShadow = "1px 1px 0px rgba(0,0,0,0.1)";
             descDisplay.style.display = "block";
             
-            menuImg.src = winner.menuUrl;
-            modalImg.src = winner.menuUrl; 
+            // 確保每次重新抽籤時，圖片都會更新
+            // 加個時間戳記避免瀏覽器快取舊圖片
+            const timestamp = new Date().getTime();
+            // 注意：因為我們是靜態檔名，這裡不加 timestamp 避免找不到檔案，但如果是動態生成則需要
+            menuImg.src = currentWinner.menuUrl;
+            modalImg.src = currentWinner.menuUrl; 
 
             menuImg.onerror = function() {
                 this.src = ''; this.alt = "⚠️ 找不到圖片，請檢查 GitHub 檔名";
                 this.style.minHeight = "100px";
             };
-            mapLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(winner.mapQuery)}`;
+            mapLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(currentWinner.mapQuery)}`;
             
             menuArea.style.display = "block";
             btn.disabled = false;
@@ -422,6 +434,27 @@
         }
         function closeModal() {
             document.getElementById("image-modal").style.display = "none";
+        }
+
+        // --- 新增功能：分享到 LINE ---
+        function shareToLine() {
+            if (!currentWinner) return;
+            const text = `🥳 大甲手搖抽籤結果：\n我們今天喝「${currentWinner.name}」！\n\n📍 地圖導航：\nhttps://www.google.com/maps/search/?api=1&query=${encodeURIComponent(currentWinner.mapQuery)}`;
+            const url = `https://line.me/R/msg/text/?${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+
+        // --- 新增功能：複製文字 ---
+        function copyResult() {
+            if (!currentWinner) return;
+            const text = `🥳 大甲手搖抽籤結果：\n我們今天喝「${currentWinner.name}」！\n\n📍 地圖導航：\nhttps://www.google.com/maps/search/?api=1&query=${encodeURIComponent(currentWinner.mapQuery)}`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert("✅ 已複製揪團文字！\n趕快貼到群組去吧！");
+            }).catch(err => {
+                console.error('複製失敗', err);
+                alert("❌ 複製失敗，請手動複製。");
+            });
         }
     </script>
 </body>
