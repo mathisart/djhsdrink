@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大甲手搖抽抽樂 V9.1 🥤</title>
+    <title>大甲手搖抽抽樂 V9.2 🥤</title>
     <style>
         /* --- 1. 全域與背景設定 --- */
         body {
             font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
+            /* 背景流動漸層 */
             background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
             color: #fff;
-            margin: 0;
-            padding: 20px;
+            margin: 0; padding: 20px;
             min-height: 100vh;
             overflow-y: auto; overflow-x: hidden; 
             display: flex; flex-direction: column; align-items: center;
@@ -25,29 +25,49 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* --- 2. 飄浮背景 (珍珠+大甲圖片) --- */
+        /* --- 2. 飄浮背景容器 --- */
         .floating-container {
             position: fixed; width: 100%; height: 100%; top: 0; left: 0;
             z-index: 0; pointer-events: none; overflow: hidden;
         }
+
+        /* (A) CSS 珍珠 */
         .boba {
             position: absolute; background: rgba(0, 0, 0, 0.15); border-radius: 50%;
-            bottom: -50px; /* 珍珠也要從下方開始 */
-            animation: floatUp 10s infinite ease-in;
+            bottom: -50px; animation: floatUp 10s infinite ease-in;
         }
+
+        /* (B) CSS 櫻花瓣 (新功能 ✨) */
+        .sakura {
+            position: absolute;
+            background: linear-gradient(120deg, #ffc0cb 0%, #ffb7b2 100%); /* 粉嫩漸層 */
+            border-radius: 100% 0 100% 0; /* 繪製成花瓣形狀 */
+            bottom: -50px;
+            opacity: 0.8;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            animation: floatUpSakura 12s infinite linear;
+        }
+
+        /* (C) 圖片裝飾 (大甲名產) */
         .deco-img {
             position: absolute; opacity: 0.8; width: 60px; height: auto;
             filter: drop-shadow(1px 1px 3px rgba(0,0,0,0.2));
             animation: floatUpIcon 15s infinite ease-in;
-            /* ✅ 關鍵修正：加入這行，讓圖片從螢幕下方開始 */
             bottom: -100px; 
         }
-        @keyframes floatUp {
+
+        /* --- 動畫定義 --- */
+        @keyframes floatUp { /* 珍珠上浮 */
             0% { transform: translateY(0) rotate(0deg); opacity: 0; }
             20% { opacity: 0.5; }
             100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
         }
-        @keyframes floatUpIcon {
+        @keyframes floatUpSakura { /* 櫻花飄落感 (旋轉不同) */
+            0% { transform: translateY(0) rotate(0deg) skew(10deg); opacity: 0; }
+            20% { opacity: 0.9; }
+            100% { transform: translateY(-120vh) rotate(720deg) skew(0deg); opacity: 0; }
+        }
+        @keyframes floatUpIcon { /* 圖片上浮 */
             0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
             20% { opacity: 0.9; }
             100% { transform: translateY(-120vh) rotate(-360deg) scale(1.2); opacity: 0; }
@@ -61,8 +81,7 @@
             border-radius: 40px;
             border: 1px solid rgba(255, 255, 255, 0.5);
             text-align: center;
-            max-width: 500px;
-            width: 100%;
+            max-width: 500px; width: 100%;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
             margin-top: 30px; margin-bottom: 50px;
             position: relative; z-index: 10;
@@ -89,7 +108,7 @@
         }
         .draw-btn:disabled { background: #e0e0e0; color: #aaa; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* --- 5. 結果顯示區 --- */
+        /* --- 5. 結果顯示區與動畫元件 --- */
         .result-box-container {
             background: rgba(255, 255, 255, 0.85);
             border-radius: 25px; padding: 20px; margin-bottom: 30px;
@@ -105,63 +124,27 @@
         }
         #shop-desc { font-size: 1.1rem; color: #ee7752; margin-top: 10px; font-weight: bold; display: none; }
 
-        /* --- 6. 動畫元素 (擲筊 + 抽籤) --- */
-        .moon-blocks-wrapper {
-            display: none; justify-content: center; gap: 20px; align-items: center;
-            height: 100px;
-        }
-        .moon-block {
-            width: 60px; height: 30px;
-            background: #d32f2f; 
-            border-radius: 0 0 60px 60px; 
-            position: relative;
-        }
+        /* 擲筊動畫 */
+        .moon-blocks-wrapper { display: none; justify-content: center; gap: 20px; align-items: center; height: 100px; }
+        .moon-block { width: 60px; height: 30px; background: #d32f2f; border-radius: 0 0 60px 60px; position: relative; }
         .tossing .moon-block { animation: toss 0.8s ease-in-out infinite; }
         .tossing .moon-block:nth-child(2) { animation-delay: 0.1s; }
-        
-        .saint-cup .moon-block:first-child { transform: rotate(0deg); background: #d32f2f; } 
+        .saint-cup .moon-block:first-child { transform: rotate(0deg); background: #d32f2f; }
         .saint-cup .moon-block:last-child { transform: rotate(180deg); background: #ffcdd2; border-radius: 60px 60px 0 0;} 
+        @keyframes toss { 0% { transform: translateY(0); } 50% { transform: translateY(-30px) rotate(360deg); } 100% { transform: translateY(0) rotate(720deg); } }
 
-        @keyframes toss {
-            0% { transform: translateY(0) rotate(0); }
-            50% { transform: translateY(-30px) rotate(360deg); }
-            100% { transform: translateY(0) rotate(720deg); }
-        }
-
-        .stick-wrapper {
-            display: none; flex-direction: column; align-items: center; justify-content: flex-end;
-            height: 120px; position: relative;
-        }
-        .stick-box {
-            width: 60px; height: 80px;
-            background: linear-gradient(90deg, #8d6e63, #5d4037);
-            border-radius: 5px; z-index: 2;
-        }
-        .stick {
-            width: 15px; height: 100px;
-            background: #ffe0b2;
-            border: 1px solid #ffcc80;
-            position: absolute; bottom: 10px;
-            z-index: 1;
-            display: flex; justify-content: center;
-        }
+        /* 抽籤動畫 */
+        .stick-wrapper { display: none; flex-direction: column; align-items: center; justify-content: flex-end; height: 120px; position: relative; }
+        .stick-box { width: 60px; height: 80px; background: linear-gradient(90deg, #8d6e63, #5d4037); border-radius: 5px; z-index: 2; }
+        .stick { width: 15px; height: 100px; background: #ffe0b2; border: 1px solid #ffcc80; position: absolute; bottom: 10px; z-index: 1; display: flex; justify-content: center; }
         .stick::after { content: "吉"; color: #d32f2f; font-size: 12px; margin-top: 5px; font-weight: bold;}
-        
         .drawing-stick .stick { animation: rise 1s ease-out forwards; }
-        @keyframes rise {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(10px); } 
-            100% { transform: translateY(-60px); } 
-        }
+        @keyframes rise { 0% { transform: translateY(0); } 50% { transform: translateY(10px); } 100% { transform: translateY(-60px); } }
 
-        .status-text {
-            font-size: 1.5rem; color: #888; font-weight: bold; margin-top: 10px;
-            animation: pulse 1s infinite;
-        }
+        .status-text { font-size: 1.5rem; color: #888; font-weight: bold; margin-top: 10px; animation: pulse 1s infinite; }
         @keyframes pulse { 0% { opacity: 0.5; } 100% { opacity: 1; } }
 
-
-        /* --- 7. 菜單區與燈箱 --- */
+        /* --- 6. 菜單區與燈箱 --- */
         .menu-container {
             display: none; margin-top: 30px; background: #fff;
             padding: 20px; border-radius: 25px; color: #333;
@@ -214,24 +197,19 @@
 
     <div class="main-container">
         <div class="result-box-container">
-            
             <div id="text-area" class="result-box">
                 <h2 id="shop-name">LUCKY DRAW</h2>
                 <p id="shop-desc">🎉 聖筊！就決定喝這家！</p>
             </div>
-
             <div id="moon-blocks-area" class="moon-blocks-wrapper">
                 <div class="moon-block"></div>
                 <div class="moon-block"></div>
             </div>
-
             <div id="stick-area" class="stick-wrapper">
                 <div class="stick"></div>
                 <div class="stick-box"></div>
             </div>
-
             <div id="status-text" class="status-text" style="display: none;"></div>
-
         </div>
         
         <button id="draw-btn" class="draw-btn" onclick="startRitual()">開始求籤 ✨</button>
@@ -250,19 +228,23 @@
     </div>
 
     <script>
-        // --- 1. 背景裝飾 (珍珠+大甲圖片) ---
+        // --- 1. 背景裝飾 (珍珠 + CSS櫻花 + 大甲圖片) ---
         function initBackgroundDecorations() {
             const container = document.getElementById('floating-bg');
-            const numItems = 30; 
+            const numItems = 40; // 稍微增加數量，因為現在有三種元素
+
+            // 大甲圖片 (移除了媽祖)
             const dajiaImages = [
                 { src: './images/deco-taro.png', alt: '🍠' }, 
-                { src: './images/deco-mazu.png', alt: '🙏' }, 
                 { src: './images/deco-cake.png', alt: '🥯' }, 
                 { src: './images/deco-hat.png',  alt: '👒' }
             ];
 
             for (let i = 0; i < numItems; i++) {
-                if (Math.random() > 0.4) { 
+                const rand = Math.random();
+
+                if (rand < 0.4) { 
+                    // [40%] 產生 CSS 珍珠 (Boba)
                     const boba = document.createElement('div');
                     boba.className = 'boba';
                     const size = Math.random() * 30 + 10 + 'px'; 
@@ -271,7 +253,23 @@
                     boba.style.animationDelay = Math.random() * 10 + 's';
                     boba.style.animationDuration = Math.random() * 5 + 8 + 's';
                     container.appendChild(boba);
+
+                } else if (rand < 0.7) {
+                    // [30%] 產生 CSS 櫻花瓣 (Sakura) - 新功能！
+                    const sakura = document.createElement('div');
+                    sakura.className = 'sakura';
+                    // 隨機大小
+                    const w = Math.random() * 10 + 15 + 'px'; // 寬 15-25
+                    const h = Math.random() * 10 + 20 + 'px'; // 高 20-30
+                    sakura.style.width = w; sakura.style.height = h;
+                    
+                    sakura.style.left = Math.random() * 100 + '%';
+                    sakura.style.animationDelay = Math.random() * 10 + 's';
+                    sakura.style.animationDuration = Math.random() * 5 + 10 + 's'; // 飄慢一點
+                    container.appendChild(sakura);
+
                 } else {
+                    // [30%] 產生大甲圖片 (芋頭、酥餅、草帽)
                     const randomImg = dajiaImages[Math.floor(Math.random() * dajiaImages.length)];
                     const img = document.createElement('img');
                     img.src = randomImg.src; img.alt = randomImg.alt;
