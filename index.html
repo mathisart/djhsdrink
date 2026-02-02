@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大甲手搖抽抽樂 V8.0 🥤</title>
+    <title>大甲手搖抽抽樂 V9.1 🥤</title>
     <style>
         /* --- 1. 全域與背景設定 --- */
         body {
             font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
-            /* 炫彩流動背景 */
             background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
@@ -16,11 +15,8 @@
             margin: 0;
             padding: 20px;
             min-height: 100vh;
-            overflow-y: auto; 
-            overflow-x: hidden; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            overflow-y: auto; overflow-x: hidden; 
+            display: flex; flex-direction: column; align-items: center;
         }
 
         @keyframes gradientBG {
@@ -29,46 +25,31 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* --- 2. 飄浮背景容器 (您提供的樣式) --- */
+        /* --- 2. 飄浮背景 (珍珠+大甲圖片) --- */
         .floating-container {
-            position: fixed; /* 固定在背景，不隨捲動跑掉 */
-            width: 100%;
-            height: 100%;
-            top: 0; left: 0;
-            z-index: 0;
-            pointer-events: none; /* 讓點擊穿透 */
-            overflow: hidden;
+            position: fixed; width: 100%; height: 100%; top: 0; left: 0;
+            z-index: 0; pointer-events: none; overflow: hidden;
         }
-
-        /* --- 飄浮珍珠 (您提供的樣式) --- */
         .boba {
-            position: absolute;
-            background: rgba(0, 0, 0, 0.15); /* 半透明黑色珍珠 */
-            border-radius: 50%;
-            bottom: -50px;
+            position: absolute; background: rgba(0, 0, 0, 0.15); border-radius: 50%;
+            bottom: -50px; /* 珍珠也要從下方開始 */
             animation: floatUp 10s infinite ease-in;
         }
-
-        /* --- 飄浮圖片 (大甲特色) --- */
         .deco-img {
-            position: absolute;
-            bottom: -100px;
-            opacity: 0.8;
-            animation: floatUpIcon 15s infinite ease-in;
-            width: 60px; height: auto;
+            position: absolute; opacity: 0.8; width: 60px; height: auto;
             filter: drop-shadow(1px 1px 3px rgba(0,0,0,0.2));
+            animation: floatUpIcon 15s infinite ease-in;
+            /* ✅ 關鍵修正：加入這行，讓圖片從螢幕下方開始 */
+            bottom: -100px; 
         }
-
-        /* 定義飄浮動畫 */
         @keyframes floatUp {
             0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-            20% { opacity: 0.5; } /* 珍珠比較淡 */
+            20% { opacity: 0.5; }
             100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
         }
-
         @keyframes floatUpIcon {
             0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
-            20% { opacity: 0.9; } /* 圖片比較清楚 */
+            20% { opacity: 0.9; }
             100% { transform: translateY(-120vh) rotate(-360deg) scale(1.2); opacity: 0; }
         }
 
@@ -83,41 +64,18 @@
             max-width: 500px;
             width: 100%;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
-            margin-top: 30px;
-            margin-bottom: 50px;
-            position: relative;
-            z-index: 10;
+            margin-top: 30px; margin-bottom: 50px;
+            position: relative; z-index: 10;
         }
 
-        /* --- 4. 標題與文字 --- */
-        header { margin-bottom: 20px; z-index: 10; text-align: center; position: relative;}
+        /* --- 4. 標題與按鈕 --- */
+        header { margin-bottom: 20px; z-index: 10; text-align: center; }
         h1 {
             font-size: 2.5rem; margin: 10px 0; color: #fff;
             text-shadow: 0 4px 10px rgba(0,0,0,0.2); font-weight: 900; letter-spacing: 2px;
         }
         .subtitle { font-size: 1.1rem; color: #fff; opacity: 0.95; text-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-        /* --- 5. 抽籤結果區 --- */
-        .result-box-container {
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 25px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
-            border: 2px solid rgba(255,255,255,0.8);
-        }
-        .result-box {
-            min-height: 80px; display: flex; flex-direction: column; justify-content: center; align-items: center;
-        }
-        #shop-name { 
-            font-size: 2.4rem; font-weight: 900; color: #e73c7e; margin: 0; 
-            text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
-        }
-        #shop-desc { 
-            font-size: 1.1rem; color: #ee7752; margin-top: 10px; font-weight: bold; display: none;
-        }
-
-        /* --- 6. 按鈕 --- */
         .draw-btn {
             background: #fff; color: #23a6d5; border: none;
             padding: 18px 50px; font-size: 1.5rem; border-radius: 50px;
@@ -129,9 +87,81 @@
             box-shadow: 0 15px 40px rgba(35, 166, 213, 0.5); 
             background: #23a6d5; color: #fff;
         }
-        .draw-btn:disabled { background: #e0e0e0; color: #aaa; cursor: not-allowed; box-shadow: none; transform: none;}
+        .draw-btn:disabled { background: #e0e0e0; color: #aaa; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* --- 7. 菜單顯示區 (點擊放大) --- */
+        /* --- 5. 結果顯示區 --- */
+        .result-box-container {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 25px; padding: 20px; margin-bottom: 30px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+            border: 2px solid rgba(255,255,255,0.8);
+            min-height: 150px; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            overflow: hidden; position: relative;
+        }
+        #shop-name { 
+            font-size: 2.4rem; font-weight: 900; color: #e73c7e; margin: 0; 
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
+        }
+        #shop-desc { font-size: 1.1rem; color: #ee7752; margin-top: 10px; font-weight: bold; display: none; }
+
+        /* --- 6. 動畫元素 (擲筊 + 抽籤) --- */
+        .moon-blocks-wrapper {
+            display: none; justify-content: center; gap: 20px; align-items: center;
+            height: 100px;
+        }
+        .moon-block {
+            width: 60px; height: 30px;
+            background: #d32f2f; 
+            border-radius: 0 0 60px 60px; 
+            position: relative;
+        }
+        .tossing .moon-block { animation: toss 0.8s ease-in-out infinite; }
+        .tossing .moon-block:nth-child(2) { animation-delay: 0.1s; }
+        
+        .saint-cup .moon-block:first-child { transform: rotate(0deg); background: #d32f2f; } 
+        .saint-cup .moon-block:last-child { transform: rotate(180deg); background: #ffcdd2; border-radius: 60px 60px 0 0;} 
+
+        @keyframes toss {
+            0% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-30px) rotate(360deg); }
+            100% { transform: translateY(0) rotate(720deg); }
+        }
+
+        .stick-wrapper {
+            display: none; flex-direction: column; align-items: center; justify-content: flex-end;
+            height: 120px; position: relative;
+        }
+        .stick-box {
+            width: 60px; height: 80px;
+            background: linear-gradient(90deg, #8d6e63, #5d4037);
+            border-radius: 5px; z-index: 2;
+        }
+        .stick {
+            width: 15px; height: 100px;
+            background: #ffe0b2;
+            border: 1px solid #ffcc80;
+            position: absolute; bottom: 10px;
+            z-index: 1;
+            display: flex; justify-content: center;
+        }
+        .stick::after { content: "吉"; color: #d32f2f; font-size: 12px; margin-top: 5px; font-weight: bold;}
+        
+        .drawing-stick .stick { animation: rise 1s ease-out forwards; }
+        @keyframes rise {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(10px); } 
+            100% { transform: translateY(-60px); } 
+        }
+
+        .status-text {
+            font-size: 1.5rem; color: #888; font-weight: bold; margin-top: 10px;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 0.5; } 100% { opacity: 1; } }
+
+
+        /* --- 7. 菜單區與燈箱 --- */
         .menu-container {
             display: none; margin-top: 30px; background: #fff;
             padding: 20px; border-radius: 25px; color: #333;
@@ -142,13 +172,10 @@
             width: 100%; height: auto; border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 5px;
             min-height: 200px; background-color: #f5f5f5; object-fit: contain;
-            cursor: zoom-in;
-            border: 2px solid transparent; transition: border 0.2s;
+            cursor: zoom-in; border: 2px solid transparent; transition: border 0.2s;
         }
         .menu-img:hover { border: 2px solid #23a6d5; }
-        
         .click-hint { font-size: 0.9rem; color: #888; margin-bottom: 20px; display: block; }
-
         .menu-link {
             display: block; text-decoration: none;
             color: #fff; font-weight: bold; font-size: 1.1rem;
@@ -158,24 +185,18 @@
         }
         .menu-link:hover { transform: translateY(-3px); }
 
-        /* --- 8. 全螢幕圖片燈箱 --- */
         .modal {
-            display: none; position: fixed; z-index: 9999; 
-            left: 0; top: 0; width: 100%; height: 100%; 
-            overflow: auto; background-color: rgba(0,0,0,0.9);
-            backdrop-filter: blur(5px);
+            display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; 
+            overflow: auto; background-color: rgba(0,0,0,0.9); backdrop-filter: blur(5px);
             flex-direction: column; align-items: center; justify-content: center;
         }
         .modal-content {
-            margin: auto; display: block;
-            max-width: 95%; max-height: 95vh;
-            object-fit: contain; border-radius: 5px;
-            animation: zoom 0.3s;
+            margin: auto; display: block; max-width: 95%; max-height: 95vh;
+            object-fit: contain; border-radius: 5px; animation: zoom 0.3s;
         }
         .close {
-            position: absolute; top: 20px; right: 30px;
-            color: #f1f1f1; font-size: 40px; font-weight: bold;
-            cursor: pointer; z-index: 10000;
+            position: absolute; top: 20px; right: 30px; color: #f1f1f1; 
+            font-size: 40px; font-weight: bold; cursor: pointer; z-index: 10000;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes zoom { from {transform:scale(0)} to {transform:scale(1)} }
@@ -193,20 +214,32 @@
 
     <div class="main-container">
         <div class="result-box-container">
-            <div class="result-box">
+            
+            <div id="text-area" class="result-box">
                 <h2 id="shop-name">LUCKY DRAW</h2>
                 <p id="shop-desc">🎉 聖筊！就決定喝這家！</p>
             </div>
+
+            <div id="moon-blocks-area" class="moon-blocks-wrapper">
+                <div class="moon-block"></div>
+                <div class="moon-block"></div>
+            </div>
+
+            <div id="stick-area" class="stick-wrapper">
+                <div class="stick"></div>
+                <div class="stick-box"></div>
+            </div>
+
+            <div id="status-text" class="status-text" style="display: none;"></div>
+
         </div>
         
-        <button id="draw-btn" class="draw-btn" onclick="startDraw()">搖出大甲新滋味 ✨</button>
+        <button id="draw-btn" class="draw-btn" onclick="startRitual()">開始求籤 ✨</button>
         
         <div id="menu-area" class="menu-container">
             <div style="text-align: left; font-size: 0.9rem; color: #666; margin-bottom: 10px; font-weight: bold;">👇 菜單請參考：</div>
-            
             <img id="menu-img" class="menu-img" src="" alt="菜單讀取中" onclick="openModal()">
             <span class="click-hint">👆 點擊圖片可放大查看</span>
-
             <a id="map-link" href="#" target="_blank" class="menu-link">📍 Google Maps 導航去買</a>
         </div>
     </div>
@@ -217,13 +250,10 @@
     </div>
 
     <script>
-        // --- 1. 背景裝飾產生器 (珍珠 + 大甲圖片 混搭) ---
+        // --- 1. 背景裝飾 (珍珠+大甲圖片) ---
         function initBackgroundDecorations() {
             const container = document.getElementById('floating-bg');
-            // 增加總數量，讓畫面豐富一點
             const numItems = 30; 
-            
-            // 大甲特色圖片列表
             const dajiaImages = [
                 { src: './images/deco-taro.png', alt: '🍠' }, 
                 { src: './images/deco-mazu.png', alt: '🙏' }, 
@@ -232,51 +262,32 @@
             ];
 
             for (let i = 0; i < numItems; i++) {
-                // 機率控制：60% 產生半透明珍珠 (Boba)，40% 產生大甲圖片
                 if (Math.random() > 0.4) { 
-                    // --- 產生珍珠 (CSS Boba) ---
                     const boba = document.createElement('div');
                     boba.className = 'boba';
-                    // 隨機大小
                     const size = Math.random() * 30 + 10 + 'px'; 
-                    boba.style.width = size;
-                    boba.style.height = size;
+                    boba.style.width = size; boba.style.height = size;
                     boba.style.left = Math.random() * 100 + '%';
                     boba.style.animationDelay = Math.random() * 10 + 's';
-                    boba.style.animationDuration = Math.random() * 5 + 8 + 's'; // 8~13秒
+                    boba.style.animationDuration = Math.random() * 5 + 8 + 's';
                     container.appendChild(boba);
-
                 } else {
-                    // --- 產生大甲特色圖片 ---
                     const randomImg = dajiaImages[Math.floor(Math.random() * dajiaImages.length)];
                     const img = document.createElement('img');
-                    img.src = randomImg.src;
-                    img.alt = randomImg.alt;
+                    img.src = randomImg.src; img.alt = randomImg.alt;
                     img.className = 'deco-img';
-                    
-                    // 圖片讀取失敗時變 Emoji
                     img.onerror = function() {
                         const fallback = document.createElement('div');
-                        fallback.className = 'deco-item'; // 使用通用樣式
-                        fallback.style.position = 'absolute';
+                        fallback.className = 'deco-img'; 
                         fallback.style.fontSize = '30px';
-                        fallback.style.animation = 'floatUpIcon 15s infinite ease-in';
                         fallback.textContent = this.alt;
-                        // 重新設定位置
-                        fallback.style.left = this.style.left;
-                        fallback.style.animationDelay = this.style.animationDelay;
-                        fallback.style.animationDuration = this.style.animationDuration;
-                        if(this.parentNode) this.parentNode.replaceChild(fallback, this);
+                        this.parentNode.replaceChild(fallback, this);
                     };
-
                     img.style.left = Math.random() * 100 + '%';
                     img.style.animationDelay = Math.random() * 12 + 's';
-                    img.style.animationDuration = Math.random() * 6 + 10 + 's'; // 10~16秒
-                    
-                    // 隨機大小縮放
+                    img.style.animationDuration = Math.random() * 6 + 10 + 's';
                     const scale = Math.random() * 0.5 + 0.8;
                     img.style.width = (60 * scale) + 'px';
-                    
                     container.appendChild(img);
                 }
             }
@@ -299,42 +310,59 @@
             { name: "清心福全", menuUrl: "./chingshin.jpg", mapQuery: "清心福全大甲店" }
         ];
 
-        let isDrawing = false;
-        let animationInterval;
+        let isRitualRunning = false;
 
-        function startDraw() {
-            if (isDrawing) return;
-            isDrawing = true;
+        function startRitual() {
+            if (isRitualRunning) return;
+            isRitualRunning = true;
+
             const btn = document.getElementById('draw-btn');
-            const nameDisplay = document.getElementById('shop-name');
-            const descDisplay = document.getElementById('shop-desc');
+            const textArea = document.getElementById('text-area');
+            const moonArea = document.getElementById('moon-blocks-area');
+            const stickArea = document.getElementById('stick-area');
+            const statusText = document.getElementById('status-text');
             const menuArea = document.getElementById('menu-area');
-            
+            const shopDesc = document.getElementById('shop-desc');
+
             btn.disabled = true;
-            btn.textContent = "🥤 搖一搖...";
-            menuArea.style.display = "none"; 
-            descDisplay.style.display = "none";
-            nameDisplay.style.color = "rgba(255, 255, 255, 0.7)";
-            nameDisplay.style.textShadow = "none";
+            menuArea.style.display = "none";
+            shopDesc.style.display = "none";
+            textArea.style.display = "none"; 
+            
+            moonArea.style.display = "flex";
+            moonArea.classList.add('tossing');
+            moonArea.classList.remove('saint-cup');
+            statusText.style.display = "block";
+            statusText.innerText = "🙏 誠心擲筊中...";
+            
+            setTimeout(() => {
+                moonArea.classList.remove('tossing');
+                moonArea.classList.add('saint-cup'); 
+                statusText.innerText = "✨ 聖筊！(神明同意)";
+                
+                setTimeout(() => {
+                    moonArea.style.display = "none"; 
+                    stickArea.style.display = "flex"; 
+                    stickArea.classList.add('drawing-stick');
+                    statusText.innerText = "📜 抽籤中...";
 
-            let counter = 0;
-            const totalDuration = 1500;
-            const intervalTime = 50;    
+                    setTimeout(() => {
+                        stickArea.style.display = "none";
+                        stickArea.classList.remove('drawing-stick');
+                        statusText.style.display = "none";
+                        finalizeDraw(); 
+                    }, 1500);
 
-            animationInterval = setInterval(() => {
-                const randomIndex = Math.floor(Math.random() * shops.length);
-                nameDisplay.textContent = shops[randomIndex].name;
-                counter += intervalTime;
-                if (counter >= totalDuration) {
-                    clearInterval(animationInterval);
-                    finalizeDraw();
-                }
-            }, intervalTime);
+                }, 1000);
+
+            }, 1500);
         }
 
         function finalizeDraw() {
             const finalIndex = Math.floor(Math.random() * shops.length);
             const winner = shops[finalIndex];
+
+            const textArea = document.getElementById('text-area');
             const nameDisplay = document.getElementById('shop-name');
             const descDisplay = document.getElementById('shop-desc');
             const menuImg = document.getElementById('menu-img');
@@ -343,6 +371,8 @@
             const btn = document.getElementById('draw-btn');
             const menuArea = document.getElementById('menu-area');
 
+            textArea.style.display = "flex";
+            
             nameDisplay.textContent = winner.name;
             nameDisplay.style.color = "#e73c7e"; 
             nameDisplay.style.textShadow = "1px 1px 0px rgba(0,0,0,0.1)";
@@ -359,11 +389,10 @@
             
             menuArea.style.display = "block";
             btn.disabled = false;
-            btn.textContent = "再搖一次 ✨";
-            isDrawing = false;
+            btn.textContent = "再求一支籤 🧧";
+            isRitualRunning = false;
         }
 
-        // --- 3. 圖片放大功能 (Lightbox) ---
         function openModal() {
             const modal = document.getElementById("image-modal");
             const menuImg = document.getElementById('menu-img');
@@ -371,7 +400,6 @@
                  modal.style.display = "flex";
             }
         }
-
         function closeModal() {
             document.getElementById("image-modal").style.display = "none";
         }
