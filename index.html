@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大甲手搖抽抽樂 V9.5 🥤</title>
+    <title>大甲手搖抽抽樂 V9.6 🥤</title>
     <style>
         /* --- 1. 全域與背景設定 --- */
         body {
@@ -30,13 +30,13 @@
             z-index: 0; pointer-events: none; overflow: hidden;
         }
 
-        /* (A) CSS 珍珠 (半透明黑色) */
+        /* (A) CSS 珍珠 */
         .boba {
             position: absolute; background: rgba(0, 0, 0, 0.2); border-radius: 50%;
             bottom: -60px; animation: floatUp 10s infinite ease-in;
         }
 
-        /* (B) CSS 櫻花瓣 (粉紅) */
+        /* (B) CSS 櫻花瓣 */
         .sakura {
             position: absolute;
             background: linear-gradient(120deg, #ffc0cb 0%, #ffb7b2 100%);
@@ -46,7 +46,7 @@
             animation: floatUpSakura 12s infinite linear;
         }
 
-        /* (C) CSS 鳳梨 (手繪風) */
+        /* (C) CSS 鳳梨 */
         .pineapple {
             position: absolute; bottom: -80px; opacity: 0.9;
             width: 40px; height: 55px; 
@@ -245,15 +245,15 @@
     </div>
 
     <script>
-        // --- 1. 背景裝飾 (珍珠 + 櫻花 + 鳳梨 + 真實珍奶 + 芋頭) ---
+        // --- 1. 背景裝飾 (修正為負數延遲，讓畫面一開始就滿滿的) ---
         function initBackgroundDecorations() {
             const container = document.getElementById('floating-bg');
             const numItems = 40; 
             
-            // 圖片資源：請確認您的圖片檔名是否正確！
+            // 圖片資源
             const imageAssets = [
-                { src: './images/deco-taro.png', alt: '🍠' },          // 大甲芋頭
-                { src: './images/deco-bubbletea.png', alt: '🧋' }    // 您剛上傳的珍奶圖片
+                { src: './images/deco-taro.png', alt: '🍠' },          
+                { src: './images/deco-bubbletea.png', alt: '🧋' }    
             ];
 
             for (let i = 0; i < numItems; i++) {
@@ -261,14 +261,14 @@
                 let decoItem;
 
                 if (rand < 0.25) { 
-                    // [25%] CSS 珍珠 (Boba)
+                    // [25%] CSS 珍珠
                     decoItem = document.createElement('div');
                     decoItem.className = 'boba';
                     const size = Math.random() * 35 + 25 + 'px'; 
                     decoItem.style.width = size; decoItem.style.height = size;
 
                 } else if (rand < 0.5) {
-                    // [25%] CSS 櫻花瓣 (Sakura)
+                    // [25%] CSS 櫻花瓣
                     decoItem = document.createElement('div');
                     decoItem.className = 'sakura';
                     const w = Math.random() * 20 + 25 + 'px'; 
@@ -276,21 +276,19 @@
                     decoItem.style.width = w; decoItem.style.height = h;
 
                 } else if (rand < 0.7) {
-                    // [20%] CSS 鳳梨 (Pineapple)
+                    // [20%] CSS 鳳梨
                     decoItem = document.createElement('div');
                     decoItem.className = 'pineapple';
                     const scale = Math.random() * 0.4 + 0.8; 
                     decoItem.style.transform = `scale(${scale})`;
 
                 } else {
-                    // [30%] 圖片裝飾 (隨機選芋頭或您的珍奶圖)
+                    // [30%] 圖片裝飾 (芋頭 + 珍奶)
                     const randomImg = imageAssets[Math.floor(Math.random() * imageAssets.length)];
                     decoItem = document.createElement('img');
                     decoItem.src = randomImg.src; 
                     decoItem.alt = randomImg.alt;
                     decoItem.className = 'deco-img';
-                    
-                    // 圖片讀不到時變文字
                     decoItem.onerror = function() {
                         const fallback = document.createElement('div');
                         fallback.className = 'deco-img'; 
@@ -298,18 +296,26 @@
                         fallback.textContent = this.alt;
                         this.parentNode.replaceChild(fallback, this);
                     };
-                    
                     const scale = Math.random() * 0.5 + 1.0; 
                     decoItem.style.width = (80 * scale) + 'px';
                 }
 
+                // --- 關鍵修正：使用負數 delay ---
                 decoItem.style.left = Math.random() * 100 + '%';
-                decoItem.style.animationDelay = Math.random() * 15 + 's';
+                
+                // 動畫總長度
+                let duration;
                 if (decoItem.tagName === 'IMG') {
-                     decoItem.style.animationDuration = Math.random() * 6 + 12 + 's';
+                     duration = Math.random() * 6 + 12; // 12~18s
                 } else {
-                     decoItem.style.animationDuration = Math.random() * 8 + 10 + 's';
+                     duration = Math.random() * 8 + 10; // 10~18s
                 }
+                decoItem.style.animationDuration = duration + 's';
+
+                // 負數延遲：讓它從動畫的中間開始播放
+                // 例如：動畫長度 15s，延遲 -7s，表示它已經飄了一半了
+                const delay = Math.random() * duration * -1;
+                decoItem.style.animationDelay = delay + 's';
                 
                 container.appendChild(decoItem);
             }
