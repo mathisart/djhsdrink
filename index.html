@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大甲手搖抽抽樂 V9.2 🥤</title>
+    <title>大甲手搖抽抽樂 V9.3 🥤</title>
     <style>
         /* --- 1. 全域與背景設定 --- */
         body {
@@ -31,46 +31,84 @@
             z-index: 0; pointer-events: none; overflow: hidden;
         }
 
-        /* (A) CSS 珍珠 */
+        /* ================= 定義各種飄浮元素樣式 ================= */
+        
+        /* (A) CSS 珍珠 (黑色半透明) */
         .boba {
-            position: absolute; background: rgba(0, 0, 0, 0.15); border-radius: 50%;
-            bottom: -50px; animation: floatUp 10s infinite ease-in;
+            position: absolute; background: rgba(0, 0, 0, 0.2); border-radius: 50%;
+            bottom: -60px; animation: floatUp 10s infinite ease-in;
         }
 
-        /* (B) CSS 櫻花瓣 (新功能 ✨) */
+        /* (B) CSS 櫻花瓣 (粉紅) */
         .sakura {
             position: absolute;
-            background: linear-gradient(120deg, #ffc0cb 0%, #ffb7b2 100%); /* 粉嫩漸層 */
-            border-radius: 100% 0 100% 0; /* 繪製成花瓣形狀 */
-            bottom: -50px;
-            opacity: 0.8;
+            background: linear-gradient(120deg, #ffc0cb 0%, #ffb7b2 100%);
+            border-radius: 100% 0 100% 0;
+            bottom: -60px; opacity: 0.85;
             box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
             animation: floatUpSakura 12s infinite linear;
         }
 
-        /* (C) 圖片裝飾 (大甲名產) */
+        /* (C) CSS 鳳梨 (新!) */
+        .pineapple {
+            position: absolute; bottom: -80px; opacity: 0.9;
+            width: 40px; height: 55px; /* 基礎大小 */
+            background: linear-gradient(to bottom, #fff59d, #fbc02d); /* 黃色漸層果身 */
+            border-radius: 45% 45% 50% 50% / 60% 60% 40% 40%; /* 橢圓形狀 */
+            filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.15));
+            animation: floatUpCSS 14s infinite linear;
+        }
+        .pineapple::before { /* 綠色葉冠 */
+            content: ''; position: absolute; top: -10px; left: 15%;
+            width: 70%; height: 15px;
+            background: #66bb6a; border-radius: 50% 50% 5px 5px;
+            clip-path: polygon(0% 100%, 20% 0%, 40% 60%, 60% 0%, 80% 60%, 100% 0%, 100% 100%); /* 鋸齒狀 */
+        }
+
+        /* (D) CSS 珍珠奶茶 (新!) */
+        .bubble-tea {
+            position: absolute; bottom: -80px; opacity: 0.9;
+            width: 35px; height: 50px; /* 基礎大小 */
+            background: linear-gradient(to bottom, #ffe0b2 0%, #d7ccc8 30%, #a1887f 100%); /* 奶茶漸層 */
+            border-radius: 4px 4px 12px 12px; /* 杯子形狀 */
+            border-top: 4px solid #eceff1; /* 杯蓋 */
+            filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.15));
+            animation: floatUpCSS 13s infinite linear;
+        }
+        .bubble-tea::after { /* 紅色吸管 */
+            content: ''; position: absolute; top: -15px; right: 8px;
+            width: 6px; height: 20px; background: #ef5350;
+            transform: rotate(10deg); border-radius: 2px;
+        }
+
+        /* (E) 圖片裝飾 (只剩下大甲芋頭) */
         .deco-img {
-            position: absolute; opacity: 0.8; width: 60px; height: auto;
+            position: absolute; opacity: 0.85; width: 80px; /* 基礎大小加大 */ height: auto;
             filter: drop-shadow(1px 1px 3px rgba(0,0,0,0.2));
             animation: floatUpIcon 15s infinite ease-in;
             bottom: -100px; 
         }
 
         /* --- 動畫定義 --- */
-        @keyframes floatUp { /* 珍珠上浮 */
+        @keyframes floatUp { /* 珍珠單純上浮 */
             0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-            20% { opacity: 0.5; }
+            20% { opacity: 0.6; }
             100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
         }
-        @keyframes floatUpSakura { /* 櫻花飄落感 (旋轉不同) */
+        @keyframes floatUpSakura { /* 櫻花飄落感 */
             0% { transform: translateY(0) rotate(0deg) skew(10deg); opacity: 0; }
             20% { opacity: 0.9; }
             100% { transform: translateY(-120vh) rotate(720deg) skew(0deg); opacity: 0; }
         }
+        @keyframes floatUpCSS { /* 新的CSS圖示上浮 (輕微旋轉) */
+            0% { transform: translateY(0) rotate(0deg) scale(0.9); opacity: 0; }
+            20% { opacity: 0.95; }
+            100% { transform: translateY(-120vh) rotate(180deg) scale(1.1); opacity: 0; }
+        }
         @keyframes floatUpIcon { /* 圖片上浮 */
             0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
             20% { opacity: 0.9; }
-            100% { transform: translateY(-120vh) rotate(-360deg) scale(1.2); opacity: 0; }
+            100% { transform: translateY(-120vh) rotate(-180deg) scale(1.2); opacity: 0; }
         }
 
         /* --- 3. 主容器 --- */
@@ -202,12 +240,10 @@
                 <p id="shop-desc">🎉 聖筊！就決定喝這家！</p>
             </div>
             <div id="moon-blocks-area" class="moon-blocks-wrapper">
-                <div class="moon-block"></div>
-                <div class="moon-block"></div>
+                <div class="moon-block"></div><div class="moon-block"></div>
             </div>
             <div id="stick-area" class="stick-wrapper">
-                <div class="stick"></div>
-                <div class="stick-box"></div>
+                <div class="stick"></div><div class="stick-box"></div>
             </div>
             <div id="status-text" class="status-text" style="display: none;"></div>
         </div>
@@ -228,66 +264,76 @@
     </div>
 
     <script>
-        // --- 1. 背景裝飾 (珍珠 + CSS櫻花 + 大甲圖片) ---
+        // --- 1. 背景裝飾 (珍珠 + 櫻花 + 鳳梨 + 珍奶 + 芋頭圖片) ---
         function initBackgroundDecorations() {
             const container = document.getElementById('floating-bg');
-            const numItems = 40; // 稍微增加數量，因為現在有三種元素
+            const numItems = 40; // 總數量
 
-            // 大甲圖片 (移除了媽祖)
-            const dajiaImages = [
-                { src: './images/deco-taro.png', alt: '🍠' }, 
-                { src: './images/deco-cake.png', alt: '🥯' }, 
-                { src: './images/deco-hat.png',  alt: '👒' }
-            ];
+            // 只剩下大甲芋頭的圖片
+            const dajiaImages = [{ src: './images/deco-taro.png', alt: '🍠' }];
 
             for (let i = 0; i < numItems; i++) {
                 const rand = Math.random();
+                let decoItem;
 
-                if (rand < 0.4) { 
-                    // [40%] 產生 CSS 珍珠 (Boba)
-                    const boba = document.createElement('div');
-                    boba.className = 'boba';
-                    const size = Math.random() * 30 + 10 + 'px'; 
-                    boba.style.width = size; boba.style.height = size;
-                    boba.style.left = Math.random() * 100 + '%';
-                    boba.style.animationDelay = Math.random() * 10 + 's';
-                    boba.style.animationDuration = Math.random() * 5 + 8 + 's';
-                    container.appendChild(boba);
+                if (rand < 0.25) { 
+                    // [25%] CSS 珍珠 (Boba) - 變大
+                    decoItem = document.createElement('div');
+                    decoItem.className = 'boba';
+                    const size = Math.random() * 35 + 25 + 'px'; // 25-60px
+                    decoItem.style.width = size; decoItem.style.height = size;
+
+                } else if (rand < 0.5) {
+                    // [25%] CSS 櫻花瓣 (Sakura) - 變大
+                    decoItem = document.createElement('div');
+                    decoItem.className = 'sakura';
+                    const w = Math.random() * 20 + 25 + 'px'; // 寬 25-45
+                    const h = Math.random() * 20 + 35 + 'px'; // 高 35-55
+                    decoItem.style.width = w; decoItem.style.height = h;
 
                 } else if (rand < 0.7) {
-                    // [30%] 產生 CSS 櫻花瓣 (Sakura) - 新功能！
-                    const sakura = document.createElement('div');
-                    sakura.className = 'sakura';
-                    // 隨機大小
-                    const w = Math.random() * 10 + 15 + 'px'; // 寬 15-25
-                    const h = Math.random() * 10 + 20 + 'px'; // 高 20-30
-                    sakura.style.width = w; sakura.style.height = h;
-                    
-                    sakura.style.left = Math.random() * 100 + '%';
-                    sakura.style.animationDelay = Math.random() * 10 + 's';
-                    sakura.style.animationDuration = Math.random() * 5 + 10 + 's'; // 飄慢一點
-                    container.appendChild(sakura);
+                    // [20%] CSS 鳳梨 (Pineapple) - 新!
+                    decoItem = document.createElement('div');
+                    decoItem.className = 'pineapple';
+                    // 隨機縮放大小
+                    const scale = Math.random() * 0.4 + 0.8; // 0.8 - 1.2 倍
+                    decoItem.style.transform = `scale(${scale})`;
+
+                } else if (rand < 0.9) {
+                    // [20%] CSS 珍珠奶茶 (Bubble Tea) - 新!
+                    decoItem = document.createElement('div');
+                    decoItem.className = 'bubble-tea';
+                    const scale = Math.random() * 0.4 + 0.8;
+                    decoItem.style.transform = `scale(${scale})`;
 
                 } else {
-                    // [30%] 產生大甲圖片 (芋頭、酥餅、草帽)
-                    const randomImg = dajiaImages[Math.floor(Math.random() * dajiaImages.length)];
-                    const img = document.createElement('img');
-                    img.src = randomImg.src; img.alt = randomImg.alt;
-                    img.className = 'deco-img';
-                    img.onerror = function() {
+                    // [10%] 圖片 (大甲芋頭) - 變大
+                    const randomImg = dajiaImages[0];
+                    decoItem = document.createElement('img');
+                    decoItem.src = randomImg.src; decoItem.alt = randomImg.alt;
+                    decoItem.className = 'deco-img';
+                    decoItem.onerror = function() {
                         const fallback = document.createElement('div');
                         fallback.className = 'deco-img'; 
-                        fallback.style.fontSize = '30px';
+                        fallback.style.fontSize = '40px';
                         fallback.textContent = this.alt;
                         this.parentNode.replaceChild(fallback, this);
                     };
-                    img.style.left = Math.random() * 100 + '%';
-                    img.style.animationDelay = Math.random() * 12 + 's';
-                    img.style.animationDuration = Math.random() * 6 + 10 + 's';
-                    const scale = Math.random() * 0.5 + 0.8;
-                    img.style.width = (60 * scale) + 'px';
-                    container.appendChild(img);
+                    const scale = Math.random() * 0.5 + 1.0; // 1.0 - 1.5 倍基礎大小 (80px)
+                    decoItem.style.width = (80 * scale) + 'px';
                 }
+
+                // 共同設定：位置與動畫時間
+                decoItem.style.left = Math.random() * 100 + '%';
+                decoItem.style.animationDelay = Math.random() * 15 + 's';
+                // CSS繪製的元素與圖片使用不同的動畫時間基數
+                if (decoItem.tagName === 'IMG') {
+                     decoItem.style.animationDuration = Math.random() * 6 + 12 + 's';
+                } else {
+                     decoItem.style.animationDuration = Math.random() * 8 + 10 + 's';
+                }
+                
+                container.appendChild(decoItem);
             }
         }
         window.addEventListener('load', initBackgroundDecorations);
