@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>大甲手搖抽抽樂 V13.4 📱</title>
+    <title>大甲手搖抽抽樂 V13.5 📱</title>
     <style>
         /* --- 1. 全域與背景設定 --- */
         * { box-sizing: border-box; } 
@@ -148,19 +148,19 @@
         .tossing .moon-block { animation: toss 0.8s ease-in-out infinite; }
         .tossing .moon-block:nth-child(2) { animation-delay: 0.1s; }
         
-        /* 👇 修改點：聖筊狀態，直徑面對面 */
+        /* 👇 V13.5 修改點：修正聖筊角度，確保直徑面對面 */
         .saint-cup {
-             gap: 2px; /* 讓它們靠得更近 */
+             gap: 2px;
         }
         .saint-cup .moon-block:first-child {
-            /* 左筊：轉 -90度，平面朝右，顯示紅色凸面 */
-            transform: rotate(-90deg);
+            /* 左筊：改成轉 90度，讓圓弧在左，平面在右 */
+            transform: rotate(90deg);
             background: #d32f2f;
         }
         .saint-cup .moon-block:last-child {
-            /* 右筊：改為平頂圓底的形狀，轉 -90度，平面朝左，顯示粉色平面 */
+            /* 右筊：形狀維持(圓頂平底)，改成轉 90度，讓平面在左，圓弧在右 */
             border-radius: 60px 60px 0 0;
-            transform: rotate(-90deg);
+            transform: rotate(90deg);
             background: #ffcdd2;
         }
 
@@ -169,29 +169,28 @@
         .stick-wrapper { display: none; flex-direction: column; align-items: center; justify-content: flex-end; height: 120px; position: relative; }
         .stick-box { width: 60px; height: 80px; background: linear-gradient(90deg, #8d6e63, #5d4037); border-radius: 5px; z-index: 2; }
         
-        /* 👇 修改點：籤身樣式調整 */
+        /* 籤身樣式 (V13.4) */
         .stick { 
             width: 15px; height: 100px; background: #ffe0b2; border: 1px solid #ffcc80; 
             position: absolute; bottom: 10px; z-index: 1; 
             display: flex; 
-            justify-content: flex-start; /* 讓文字靠上對齊 */
-            padding-top: 8px; /* 增加上方留白 */
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.1); /* 增加一點竹籤質感 */
+            justify-content: flex-start;
+            padding-top: 8px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
         }
         
-        /* 👇 修改點：上上籤浮雕立體樣式 */
+        /* 上上籤浮雕樣式 (V13.4) */
         .stick::after { 
             content: "上上籤"; 
-            color: #c62828; /* 稍微深一點的紅色做基底 */
+            color: #c62828; 
             font-size: 11px; 
-            font-weight: 900; /* 最粗體 */
+            font-weight: 900;
             margin-top: 0; 
             writing-mode: vertical-rl;
             letter-spacing: 2px;
-            /* 浮雕立體效果：利用亮暗陰影創造深度 */
             text-shadow: 
-                1px 1px 1px rgba(255, 255, 255, 0.6), /* 右下亮面 */
-                -1px -1px 1px rgba(0, 0, 0, 0.3);    /* 左上暗面 */
+                1px 1px 1px rgba(255, 255, 255, 0.6),
+                -1px -1px 1px rgba(0, 0, 0, 0.3);
         }
         
         .drawing-stick .stick { animation: rise 1s ease-out forwards; }
@@ -330,7 +329,7 @@
                 <h2 id="shop-name">天選好茶</h2>
                 <p id="shop-desc">🎉 聖筊！就決定喝這家！</p>
             </div>
-            <div id="moon-blocks-area" class="moon-blocks-wrapper saint-cup">
+            <div id="moon-blocks-area" class="moon-blocks-wrapper">
                 <div class="moon-block"></div><div class="moon-block"></div>
             </div>
             <div id="stick-area" class="stick-wrapper">
@@ -436,7 +435,7 @@
         }
         window.addEventListener('load', initBackgroundDecorations);
 
-        // --- 2. 飲料店名單 ---
+        // --- 2. 飲料店名單 (已替換：一沐日 04-26865588) ---
         const shops = [
             { name: "八曜和茶", menuUrl: "./8yo.png", mapQuery: "八曜和茶 台中大甲門市", phone: "0426888988" }, 
             { name: "茶聚 CHAGE", menuUrl: "./chage.jpg", mapQuery: "茶聚大甲鎮瀾店", phone: "0426883652" }, 
@@ -477,7 +476,7 @@
             renderOrderList();
 
             moonArea.style.display = "flex";
-            moonArea.classList.remove('saint-cup'); // 重置為擲筊前狀態
+            moonArea.classList.remove('saint-cup'); 
             moonArea.classList.add('tossing');
             statusText.style.display = "block";
             statusText.innerText = "🙏 誠心擲筊中...";
