@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大甲手搖抽抽樂 V9.3 🥤</title>
+    <title>大甲手搖抽抽樂 V9.4 🥤</title>
     <style>
         /* --- 1. 全域與背景設定 --- */
         body {
             font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
-            /* 背景流動漸層 */
             background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
@@ -33,7 +32,7 @@
 
         /* ================= 定義各種飄浮元素樣式 ================= */
         
-        /* (A) CSS 珍珠 (黑色半透明) */
+        /* (A) CSS 珍珠 (背景單顆飄浮) */
         .boba {
             position: absolute; background: rgba(0, 0, 0, 0.2); border-radius: 50%;
             bottom: -60px; animation: floatUp 10s infinite ease-in;
@@ -49,12 +48,12 @@
             animation: floatUpSakura 12s infinite linear;
         }
 
-        /* (C) CSS 鳳梨 (新!) */
+        /* (C) CSS 鳳梨 */
         .pineapple {
             position: absolute; bottom: -80px; opacity: 0.9;
-            width: 40px; height: 55px; /* 基礎大小 */
-            background: linear-gradient(to bottom, #fff59d, #fbc02d); /* 黃色漸層果身 */
-            border-radius: 45% 45% 50% 50% / 60% 60% 40% 40%; /* 橢圓形狀 */
+            width: 40px; height: 55px; 
+            background: linear-gradient(to bottom, #fff59d, #fbc02d);
+            border-radius: 45% 45% 50% 50% / 60% 60% 40% 40%;
             filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.15));
             animation: floatUpCSS 14s infinite linear;
         }
@@ -62,35 +61,49 @@
             content: ''; position: absolute; top: -10px; left: 15%;
             width: 70%; height: 15px;
             background: #66bb6a; border-radius: 50% 50% 5px 5px;
-            clip-path: polygon(0% 100%, 20% 0%, 40% 60%, 60% 0%, 80% 60%, 100% 0%, 100% 100%); /* 鋸齒狀 */
+            clip-path: polygon(0% 100%, 20% 0%, 40% 60%, 60% 0%, 80% 60%, 100% 0%, 100% 100%);
         }
 
-        /* (D) CSS 珍珠奶茶 (新!) */
+        /* (D) CSS 正宗珍珠奶茶 (修正版!) 🧋 */
         .bubble-tea {
-            position: absolute; bottom: -80px; opacity: 0.9;
-            width: 35px; height: 50px; /* 基礎大小 */
-            background: linear-gradient(to bottom, #ffe0b2 0%, #d7ccc8 30%, #a1887f 100%); /* 奶茶漸層 */
-            border-radius: 4px 4px 12px 12px; /* 杯子形狀 */
-            border-top: 4px solid #eceff1; /* 杯蓋 */
-            filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.15));
+            position: absolute; bottom: -80px; opacity: 0.95;
+            width: 40px; height: 55px;
+            /* 奶茶色杯身 */
+            background-color: #f3e5ab; 
+            /* 利用 radial-gradient 畫出底部的黑色珍珠 */
+            background-image: 
+                radial-gradient(circle, #3e2723 4px, transparent 5px),
+                radial-gradient(circle, #3e2723 4px, transparent 5px),
+                radial-gradient(circle, #3e2723 4px, transparent 5px);
+            background-position: 8px 38px, 20px 32px, 30px 40px; /* 珍珠位置 */
+            background-repeat: no-repeat;
+            
+            border-radius: 5px 5px 15px 15px; /* 杯子形狀 */
+            border: 2px solid rgba(255,255,255,0.8); /* 白色杯緣 */
+            filter: drop-shadow(1px 1px 3px rgba(0,0,0,0.2));
             animation: floatUpCSS 13s infinite linear;
         }
-        .bubble-tea::after { /* 紅色吸管 */
-            content: ''; position: absolute; top: -15px; right: 8px;
-            width: 6px; height: 20px; background: #ef5350;
-            transform: rotate(10deg); border-radius: 2px;
+        .bubble-tea::before { /* 粗吸管 */
+            content: ''; position: absolute; top: -15px; left: 22px;
+            width: 8px; height: 20px; background: #ff7043;
+            border-radius: 2px; transform: rotate(10deg); z-index: -1;
+        }
+        .bubble-tea::after { /* 杯蓋封口 */
+            content: ''; position: absolute; top: -3px; left: -2px;
+            width: calc(100% + 4px); height: 6px;
+            background: #eee; border-radius: 5px;
         }
 
-        /* (E) 圖片裝飾 (只剩下大甲芋頭) */
+        /* (E) 圖片裝飾 (大甲芋頭) */
         .deco-img {
-            position: absolute; opacity: 0.85; width: 80px; /* 基礎大小加大 */ height: auto;
+            position: absolute; opacity: 0.85; width: 80px; height: auto;
             filter: drop-shadow(1px 1px 3px rgba(0,0,0,0.2));
             animation: floatUpIcon 15s infinite ease-in;
             bottom: -100px; 
         }
 
         /* --- 動畫定義 --- */
-        @keyframes floatUp { /* 珍珠單純上浮 */
+        @keyframes floatUp { /* 珍珠上浮 */
             0% { transform: translateY(0) rotate(0deg); opacity: 0; }
             20% { opacity: 0.6; }
             100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
@@ -100,10 +113,10 @@
             20% { opacity: 0.9; }
             100% { transform: translateY(-120vh) rotate(720deg) skew(0deg); opacity: 0; }
         }
-        @keyframes floatUpCSS { /* 新的CSS圖示上浮 (輕微旋轉) */
-            0% { transform: translateY(0) rotate(0deg) scale(0.9); opacity: 0; }
-            20% { opacity: 0.95; }
-            100% { transform: translateY(-120vh) rotate(180deg) scale(1.1); opacity: 0; }
+        @keyframes floatUpCSS { /* 鳳梨與珍奶上浮 (輕微搖擺) */
+            0% { transform: translateY(0) rotate(-10deg) scale(0.9); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translateY(-120vh) rotate(20deg) scale(1.1); opacity: 0; }
         }
         @keyframes floatUpIcon { /* 圖片上浮 */
             0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
@@ -267,9 +280,8 @@
         // --- 1. 背景裝飾 (珍珠 + 櫻花 + 鳳梨 + 珍奶 + 芋頭圖片) ---
         function initBackgroundDecorations() {
             const container = document.getElementById('floating-bg');
-            const numItems = 40; // 總數量
-
-            // 只剩下大甲芋頭的圖片
+            const numItems = 40; 
+            // 大甲芋頭圖片
             const dajiaImages = [{ src: './images/deco-taro.png', alt: '🍠' }];
 
             for (let i = 0; i < numItems; i++) {
@@ -277,37 +289,36 @@
                 let decoItem;
 
                 if (rand < 0.25) { 
-                    // [25%] CSS 珍珠 (Boba) - 變大
+                    // [25%] CSS 珍珠 (Boba)
                     decoItem = document.createElement('div');
                     decoItem.className = 'boba';
-                    const size = Math.random() * 35 + 25 + 'px'; // 25-60px
+                    const size = Math.random() * 35 + 25 + 'px'; 
                     decoItem.style.width = size; decoItem.style.height = size;
 
                 } else if (rand < 0.5) {
-                    // [25%] CSS 櫻花瓣 (Sakura) - 變大
+                    // [25%] CSS 櫻花瓣 (Sakura)
                     decoItem = document.createElement('div');
                     decoItem.className = 'sakura';
-                    const w = Math.random() * 20 + 25 + 'px'; // 寬 25-45
-                    const h = Math.random() * 20 + 35 + 'px'; // 高 35-55
+                    const w = Math.random() * 20 + 25 + 'px'; 
+                    const h = Math.random() * 20 + 35 + 'px'; 
                     decoItem.style.width = w; decoItem.style.height = h;
 
                 } else if (rand < 0.7) {
-                    // [20%] CSS 鳳梨 (Pineapple) - 新!
+                    // [20%] CSS 鳳梨 (Pineapple)
                     decoItem = document.createElement('div');
                     decoItem.className = 'pineapple';
-                    // 隨機縮放大小
-                    const scale = Math.random() * 0.4 + 0.8; // 0.8 - 1.2 倍
+                    const scale = Math.random() * 0.4 + 0.8; 
                     decoItem.style.transform = `scale(${scale})`;
 
                 } else if (rand < 0.9) {
-                    // [20%] CSS 珍珠奶茶 (Bubble Tea) - 新!
+                    // [20%] CSS 珍珠奶茶 (Bubble Tea) - 修正版
                     decoItem = document.createElement('div');
                     decoItem.className = 'bubble-tea';
                     const scale = Math.random() * 0.4 + 0.8;
                     decoItem.style.transform = `scale(${scale})`;
 
                 } else {
-                    // [10%] 圖片 (大甲芋頭) - 變大
+                    // [10%] 圖片 (大甲芋頭)
                     const randomImg = dajiaImages[0];
                     decoItem = document.createElement('img');
                     decoItem.src = randomImg.src; decoItem.alt = randomImg.alt;
@@ -319,14 +330,12 @@
                         fallback.textContent = this.alt;
                         this.parentNode.replaceChild(fallback, this);
                     };
-                    const scale = Math.random() * 0.5 + 1.0; // 1.0 - 1.5 倍基礎大小 (80px)
+                    const scale = Math.random() * 0.5 + 1.0; 
                     decoItem.style.width = (80 * scale) + 'px';
                 }
 
-                // 共同設定：位置與動畫時間
                 decoItem.style.left = Math.random() * 100 + '%';
                 decoItem.style.animationDelay = Math.random() * 15 + 's';
-                // CSS繪製的元素與圖片使用不同的動畫時間基數
                 if (decoItem.tagName === 'IMG') {
                      decoItem.style.animationDuration = Math.random() * 6 + 12 + 's';
                 } else {
