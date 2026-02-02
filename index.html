@@ -3,200 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大甲手搖抽抽樂 🥤</title>
+    <title>大甲手搖抽抽樂 V4.0 🍠</title>
     <style>
-        /* --- 全域設定 --- */
+        /* --- 1. 全域與動態背景設定 --- */
         body {
             font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
-            background-color: #f3e5f5; /* 淺芋頭紫背景 */
-            color: #4a148c; /* 深紫色文字 */
+            /* 設定背景顏色變數：芋頭紫 -> 淺芋紫 -> 奶油酥餅色 */
+            --bg-color-1: #9a72ac; 
+            --bg-color-2: #e0c3fc; 
+            --bg-color-3: #fcf3e0; 
+            
+            /* 背景漸層動畫 */
+            background: linear-gradient(45deg, var(--bg-color-1), var(--bg-color-2), var(--bg-color-3), var(--bg-color-1));
+            background-size: 400% 400%;
+            animation: gradient-shift 15s ease infinite;
+            
+            color: #fff;
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             min-height: 100vh;
             padding: 20px;
+            overflow: hidden;
+            position: relative;
         }
 
-        /* --- 標題區 --- */
-        header { text-align: center; margin-bottom: 20px; }
-        h1 {
-            font-size: 2.2rem; margin: 10px 0; color: #6a1b9a;
-            text-shadow: 2px 2px 0px #ffd700; /* 媽祖金陰影 */
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
-        .subtitle { font-size: 1rem; color: #8e24aa; }
 
-        /* --- 主容器 --- */
-        .lucky-draw-container {
-            background: white;
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(106, 27, 154, 0.2);
+        /* --- 2. 背景動態裝飾容器 --- */
+        #background-decorations {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+
+        .deco-item {
+            position: absolute;
+            bottom: -100px;
+            opacity: 0.8;
+            animation: floatUp linear infinite;
+            font-size: 35px; /* Emoji 大小 */
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+        }
+        
+        .deco-img {
+            width: 60px; /* 裝飾圖片大小 */
+            height: auto;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(0.7);
+                opacity: 0;
+            }
+            15% { opacity: 0.9; }
+            100% {
+                transform: translateY(-120vh) rotate(360deg) scale(1.1);
+                opacity: 0;
+            }
+        }
+
+        /* --- 3. 主內容容器 (磨砂玻璃效果) --- */
+        .main-container {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            border-radius: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.6);
             text-align: center;
-            max-width: 450px;
-            width: 100%;
-            border: 3px solid #ffd700; /* 金色邊框 */
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 15px 35px rgba(106, 27, 154, 0.2);
+            position: relative;
+            z-index: 10;
         }
 
-        /* --- 店名顯示區 --- */
+        /* --- 4. 標題與文字 --- */
+        header { margin-bottom: 20px; z-index: 10; }
+        h1 {
+            font-size: 2.5rem; margin: 10px 0; color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3); font-weight: bold;
+        }
+        .subtitle { font-size: 1.1rem; color: #f3e5f5; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+
+        /* --- 5. 抽籤結果區 --- */
+        .result-box-container {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 12px;
+            border: 3px solid rgba(255, 215, 0, 0.6); /* 媽祖金邊框 */
+            margin-bottom: 30px;
+            box-shadow: inset 0 0 20px rgba(255, 215, 0, 0.2);
+        }
         .result-box {
-            min-height: 80px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 15px;
-            background-color: #fffde7;
-            border-radius: 10px;
-            border: 2px dashed #fbc02d;
+            min-height: 100px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.2) 100%);
+            border-radius: 15px;
+        }
+        #shop-name { 
+            font-size: 2.2rem; font-weight: bold; color: #4a148c; margin: 0; 
+            text-shadow: 1px 1px 0px #ffd700; 
+        }
+        #shop-desc { 
+            font-size: 1rem; color: #6a1b9a; margin-top: 5px; font-weight: bold; display: none;
         }
 
-        #shop-name {
-            font-size: 2rem; font-weight: bold; color: #4a148c; margin: 0;
-        }
-
-        /* --- 按鈕 --- */
+        /* --- 6. 按鈕 --- */
         .draw-btn {
-            background: linear-gradient(45deg, #6a1b9a, #8e24aa);
-            color: white;
+            background: linear-gradient(45deg, #ffd700, #ffb300);
+            color: #5e35b1;
             border: none;
-            padding: 12px 30px;
-            font-size: 1.3rem;
+            padding: 15px 40px;
+            font-size: 1.5rem;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(106, 27, 154, 0.4);
-            transition: transform 0.1s;
-            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(255, 193, 7, 0.4);
+            transition: all 0.2s;
+            font-weight: 900;
             width: 100%;
-            margin-bottom: 20px;
         }
+        .draw-btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
         .draw-btn:active { transform: scale(0.98); }
-        .draw-btn:disabled { background: #ccc; cursor: not-allowed; }
+        .draw-btn:disabled { background: #ddd; color: #999; cursor: not-allowed; box-shadow: none; filter: none; }
 
-        /* --- 菜單圖片區 --- */
+        /* --- 7. 菜單顯示區 --- */
         .menu-container {
-            display: none; /* 預設隱藏 */
-            margin-top: 15px;
-            border-top: 2px solid #eee;
-            padding-top: 15px;
+            display: none;
+            margin-top: 25px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 15px;
+            color: #4a148c;
             animation: fadeIn 0.5s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
-
         .menu-img {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-bottom: 10px;
-            min-height: 200px;
-            background-color: #eee;
-            object-fit: contain;
+            width: 100%; height: auto; border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 10px;
+            min-height: 200px; background-color: #eee; object-fit: contain;
         }
-
         .menu-link {
-            display: block;
-            margin-top: 10px;
-            text-decoration: none;
-            color: #d81b60;
-            font-weight: bold;
-            font-size: 0.9rem;
-            padding: 10px;
-            background: #ffebee;
-            border-radius: 5px;
+            display: block; margin-top: 10px; text-decoration: none;
+            color: #d81b60; font-weight: bold; font-size: 0.9rem;
+            padding: 12px; background: #ffebee; border-radius: 10px;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
+    <div id="background-decorations"></div>
+
     <header>
-        <div style="font-size: 2.5rem;">🏯🎲🥤</div>
-        <h1>大甲手搖抽抽樂</h1>
-        <div class="subtitle">媽祖保庇，今天喝這杯！</div>
+        <h1>🍠 大甲手搖抽抽樂 🥤</h1>
+        <div class="subtitle">媽祖保庇 • 隨機選好茶</div>
     </header>
 
-    <div class="lucky-draw-container">
-        <div class="result-box">
-            <h2 id="shop-name">???</h2>
+    <div class="main-container">
+        <div class="result-box-container">
+            <div class="result-box">
+                <h2 id="shop-name">LUCKY DRAW</h2>
+                <p id="shop-desc">今天喝哪家？</p>
+            </div>
         </div>
         
-        <button id="draw-btn" class="draw-btn" onclick="startDraw()">LUCKY DRAW</button>
+        <button id="draw-btn" class="draw-btn" onclick="startDraw()">搖出大甲新滋味✨</button>
         
         <div id="menu-area" class="menu-container">
             <div style="text-align: left; font-size: 0.9rem; color: #666; margin-bottom: 5px;">👇 菜單請參考：</div>
-            
             <img id="menu-img" class="menu-img" src="" alt="菜單讀取中">
-            
             <a id="map-link" href="#" target="_blank" class="menu-link">📍 Google Maps 導航去買</a>
         </div>
     </div>
 
     <script>
-        // --- 大甲手搖飲全明星名單 (12家) ---
-        const shops = [
-            { 
-                name: "八曜和茶", 
-                menuUrl: "./8yo.jpg", 
-                mapQuery: "八曜和茶 台中大甲門市" 
-            },
-            { 
-                name: "茶聚 CHAGE", 
-                menuUrl: "./chage.jpg", 
-                mapQuery: "茶聚大甲鎮瀾店" 
-            },
-            { 
-                name: "CoCo都可", 
-                menuUrl: "./coco.jpg", 
-                mapQuery: "CoCo都可 大甲店" 
-            },
-            { 
-                name: "茶湯會", 
-                menuUrl: "./tptea.jpg", 
-                mapQuery: "茶湯會 大甲鎮瀾店" 
-            },
-            { 
-                name: "麻古茶坊", 
-                menuUrl: "./macu.jpg", 
-                mapQuery: "麻古茶坊大甲鎮瀾店" 
-            },
-            { 
-                name: "可不可熟成紅茶", 
-                menuUrl: "./kebuke.jpg", 
-                mapQuery: "可不可熟成紅茶大甲店" 
-            },
-            { 
-                name: "50嵐", 
-                menuUrl: "./50lan.jpg", 
-                mapQuery: "50嵐大甲店" 
-            },
-            { 
-                name: "龜記茗品", 
-                menuUrl: "./guiji.jpg", 
-                mapQuery: "龜記茗品-大甲順天店" 
-            },
-            { 
-                name: "得正 Oolong Tea", 
-                menuUrl: "./dejeng.jpg", 
-                mapQuery: "得正#台中大甲計劃" 
-            },
-            { 
-                name: "大茗本位製茶堂", 
-                menuUrl: "./daming.jpg", 
-                mapQuery: "大茗本位製茶堂大甲" 
-            },
-            { 
-                name: "迷客夏 Milksha", 
-                menuUrl: "./milksha.jpg", 
-                mapQuery: "迷客夏大甲店" 
-            },
-            { 
-                name: "清心福全", 
-                menuUrl: "./chingshin.jpg", 
-                mapQuery: "清心福全大甲店" 
+        // --- 1. 初始化背景動態裝飾 (大甲特色版) ---
+        function initBackgroundDecorations() {
+            const container = document.getElementById('background-decorations');
+            const numItems = 20; // 裝飾數量
+
+            // 定義裝飾：優先抓取 images 資料夾的圖片，若無圖片則用 Emoji
+            const decoTypes = [
+                { type: 'img', src: './images/deco-taro.png', alt: '🍠' }, // 芋頭
+                { type: 'img', src: './images/deco-mazu.png', alt: '🙏' }, // 媽祖
+                { type: 'img', src: './images/deco-cake.png', alt: '🥯' }, // 酥餅
+                { type: 'img', src: './images/deco-hat.png',  alt: '👒' }  // 草帽
+            ];
+
+            for (let i = 0; i < numItems; i++) {
+                const randomType = decoTypes[Math.floor(Math.random() * decoTypes.length)];
+                let decoItem;
+
+                if (randomType.type === 'img') {
+                    decoItem = document.createElement('img');
+                    decoItem.src = randomType.src;
+                    decoItem.alt = randomType.alt;
+                    decoItem.classList.add('deco-item', 'deco-img');
+                    
+                    // 如果圖片讀取失敗 (例如還沒上傳)，自動變成 Emoji
+                    decoItem.onerror = function() {
+                        const fallback = document.createElement('div');
+                        fallback.classList.add('deco-item');
+                        fallback.textContent = this.alt;
+                        applyRandomStyles(fallback);
+                        if(this.parentNode) this.parentNode.replaceChild(fallback, this);
+                    };
+                } else {
+                    decoItem = document.createElement('div');
+                    decoItem.textContent = randomType.alt;
+                    decoItem.classList.add('deco-item');
+                }
+
+                // 避免 onerror 發生前就 append 導致的樣式問題
+                if (decoItem.tagName !== 'IMG') {
+                    applyRandomStyles(decoItem);
+                    container.appendChild(decoItem);
+                } else {
+                    // 圖片載入才顯示，或直接加入讓 onerror 處理
+                    applyRandomStyles(decoItem);
+                    container.appendChild(decoItem);
+                }
             }
+        }
+
+        function applyRandomStyles(element) {
+            element.style.left = Math.random() * 100 + '%';
+            const duration = Math.random() * 8 + 10; // 10~18秒
+            element.style.animationDuration = duration + 's';
+            element.style.animationDelay = Math.random() * 10 + 's';
+            
+            // 隨機大小
+            const scale = Math.random() * 0.5 + 0.7;
+            if (element.tagName === 'IMG') {
+                 element.style.width = (60 * scale) + 'px';
+            } else {
+                 element.style.fontSize = (35 * scale) + 'px';
+            }
+        }
+
+        window.addEventListener('load', initBackgroundDecorations);
+
+        // --- 2. 飲料店名單 (12家完整版) ---
+        // 請確保您的菜單圖片已上傳，且檔名與這裡一致
+        const shops = [
+            { name: "八曜和茶", menuUrl: "./8yo.jpg", mapQuery: "八曜和茶 台中大甲門市" },
+            { name: "茶聚 CHAGE", menuUrl: "./chage.jpg", mapQuery: "茶聚大甲鎮瀾店" },
+            { name: "CoCo都可", menuUrl: "./coco.jpg", mapQuery: "CoCo都可 大甲店" },
+            { name: "茶湯會", menuUrl: "./tptea.jpg", mapQuery: "茶湯會 大甲鎮瀾店" },
+            { name: "麻古茶坊", menuUrl: "./macu.jpg", mapQuery: "麻古茶坊大甲鎮瀾店" },
+            { name: "可不可熟成紅茶", menuUrl: "./kebuke.jpg", mapQuery: "可不可熟成紅茶大甲店" },
+            { name: "50嵐", menuUrl: "./50lan.jpg", mapQuery: "50嵐大甲店" },
+            { name: "龜記茗品", menuUrl: "./guiji.jpg", mapQuery: "龜記茗品-大甲順天店" },
+            { name: "得正 Oolong Tea", menuUrl: "./dejeng.jpg", mapQuery: "得正#台中大甲計劃" },
+            { name: "大茗本位製茶堂", menuUrl: "./daming.jpg", mapQuery: "大茗本位製茶堂大甲" },
+            { name: "迷客夏 Milksha", menuUrl: "./milksha.jpg", mapQuery: "迷客夏大甲店" },
+            { name: "清心福全", menuUrl: "./chingshin.jpg", mapQuery: "清心福全大甲店" }
         ];
 
         let isDrawing = false;
@@ -204,28 +272,27 @@
 
         function startDraw() {
             if (isDrawing) return;
-            
             isDrawing = true;
+            
             const btn = document.getElementById('draw-btn');
             const nameDisplay = document.getElementById('shop-name');
+            const descDisplay = document.getElementById('shop-desc');
             const menuArea = document.getElementById('menu-area');
             
-            // 介面重置
             btn.disabled = true;
-            btn.textContent = "抽籤中...";
+            btn.textContent = "祈求媽祖指示中...";
             menuArea.style.display = "none"; 
-            nameDisplay.style.color = "#ccc"; 
+            descDisplay.style.display = "none";
+            nameDisplay.style.color = "rgba(74, 20, 140, 0.5)";
 
-            // 動畫
             let counter = 0;
-            const totalDuration = 1000; // 動畫跑1秒
+            const totalDuration = 1500;
             const intervalTime = 50;    
 
             animationInterval = setInterval(() => {
                 const randomIndex = Math.floor(Math.random() * shops.length);
                 nameDisplay.textContent = shops[randomIndex].name;
                 counter += intervalTime;
-
                 if (counter >= totalDuration) {
                     clearInterval(animationInterval);
                     finalizeDraw();
@@ -236,33 +303,29 @@
         function finalizeDraw() {
             const finalIndex = Math.floor(Math.random() * shops.length);
             const winner = shops[finalIndex];
-
+            
             const nameDisplay = document.getElementById('shop-name');
+            const descDisplay = document.getElementById('shop-desc');
             const menuImg = document.getElementById('menu-img');
             const mapLink = document.getElementById('map-link');
             const btn = document.getElementById('draw-btn');
             const menuArea = document.getElementById('menu-area');
 
-            // 顯示中獎資訊
             nameDisplay.textContent = winner.name;
-            nameDisplay.style.color = "#d81b60"; // 洋紅色
+            nameDisplay.style.color = "#d81b60"; // 中獎色
+            descDisplay.textContent = "🎉 聖筊！就決定喝這家！";
+            descDisplay.style.display = "block";
             
-            // 設定菜單圖片與連結
             menuImg.src = winner.menuUrl;
-            
-            // 處理圖片載入錯誤 (如果檔名打錯，顯示提示)
             menuImg.onerror = function() {
-                this.src = ''; // 清空
-                this.alt = "⚠️ 找不到菜單圖片，請檢查 GitHub 檔名是否正確";
+                this.src = ''; 
+                this.alt = "⚠️ 找不到菜單圖片，請確認 GitHub 檔名是否正確";
             };
-
             mapLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(winner.mapQuery)}`;
             
-            // 顯示結果
             menuArea.style.display = "block";
-            
             btn.disabled = false;
-            btn.textContent = "不滿意？再抽一次";
+            btn.textContent = "不滿意？再求一支籤 🧧";
             isDrawing = false;
         }
     </script>
