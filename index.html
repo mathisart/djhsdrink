@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大甲手搖抽抽樂 V7.0 🥤</title>
+    <title>大甲手搖抽抽樂 V8.0 🥤</title>
     <style>
         /* --- 1. 全域與背景設定 --- */
         body {
@@ -29,21 +29,47 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* --- 2. 背景裝飾 (固定不動) --- */
-        #background-decorations {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 0; overflow: hidden;
+        /* --- 2. 飄浮背景容器 (您提供的樣式) --- */
+        .floating-container {
+            position: fixed; /* 固定在背景，不隨捲動跑掉 */
+            width: 100%;
+            height: 100%;
+            top: 0; left: 0;
+            z-index: 0;
+            pointer-events: none; /* 讓點擊穿透 */
+            overflow: hidden;
         }
-        .deco-item {
-            position: absolute; bottom: -100px; opacity: 0.6;
-            animation: floatUp linear infinite; font-size: 35px;
+
+        /* --- 飄浮珍珠 (您提供的樣式) --- */
+        .boba {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.15); /* 半透明黑色珍珠 */
+            border-radius: 50%;
+            bottom: -50px;
+            animation: floatUp 10s infinite ease-in;
+        }
+
+        /* --- 飄浮圖片 (大甲特色) --- */
+        .deco-img {
+            position: absolute;
+            bottom: -100px;
+            opacity: 0.8;
+            animation: floatUpIcon 15s infinite ease-in;
+            width: 60px; height: auto;
             filter: drop-shadow(1px 1px 3px rgba(0,0,0,0.2));
         }
-        .deco-img { width: 60px; height: auto; }
+
+        /* 定義飄浮動畫 */
         @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.5; } /* 珍珠比較淡 */
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes floatUpIcon {
             0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
-            20% { opacity: 0.8; }
-            100% { transform: translateY(-120vh) rotate(360deg) scale(1.2); opacity: 0; }
+            20% { opacity: 0.9; } /* 圖片比較清楚 */
+            100% { transform: translateY(-120vh) rotate(-360deg) scale(1.2); opacity: 0; }
         }
 
         /* --- 3. 主容器 --- */
@@ -64,7 +90,7 @@
         }
 
         /* --- 4. 標題與文字 --- */
-        header { margin-bottom: 20px; z-index: 10; text-align: center; }
+        header { margin-bottom: 20px; z-index: 10; text-align: center; position: relative;}
         h1 {
             font-size: 2.5rem; margin: 10px 0; color: #fff;
             text-shadow: 0 4px 10px rgba(0,0,0,0.2); font-weight: 900; letter-spacing: 2px;
@@ -105,7 +131,7 @@
         }
         .draw-btn:disabled { background: #e0e0e0; color: #aaa; cursor: not-allowed; box-shadow: none; transform: none;}
 
-        /* --- 7. 菜單顯示區 (小圖) --- */
+        /* --- 7. 菜單顯示區 (點擊放大) --- */
         .menu-container {
             display: none; margin-top: 30px; background: #fff;
             padding: 20px; border-radius: 25px; color: #333;
@@ -116,15 +142,12 @@
             width: 100%; height: auto; border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 5px;
             min-height: 200px; background-color: #f5f5f5; object-fit: contain;
-            cursor: zoom-in; /* 滑鼠移上去變成放大鏡 */
-            border: 2px solid transparent;
-            transition: border 0.2s;
+            cursor: zoom-in;
+            border: 2px solid transparent; transition: border 0.2s;
         }
         .menu-img:hover { border: 2px solid #23a6d5; }
         
-        .click-hint {
-            font-size: 0.9rem; color: #888; margin-bottom: 20px; display: block;
-        }
+        .click-hint { font-size: 0.9rem; color: #888; margin-bottom: 20px; display: block; }
 
         .menu-link {
             display: block; text-decoration: none;
@@ -135,41 +158,33 @@
         }
         .menu-link:hover { transform: translateY(-3px); }
 
-        /* --- 8. 全螢幕圖片燈箱 (Lightbox) --- */
+        /* --- 8. 全螢幕圖片燈箱 --- */
         .modal {
-            display: none; /* 預設隱藏 */
-            position: fixed; z-index: 9999; 
+            display: none; position: fixed; z-index: 9999; 
             left: 0; top: 0; width: 100%; height: 100%; 
-            overflow: auto; /* 允許滾動 */
-            background-color: rgba(0,0,0,0.9); /* 深黑背景 */
+            overflow: auto; background-color: rgba(0,0,0,0.9);
             backdrop-filter: blur(5px);
             flex-direction: column; align-items: center; justify-content: center;
         }
-        /* 放大後的圖片 */
         .modal-content {
             margin: auto; display: block;
             max-width: 95%; max-height: 95vh;
-            object-fit: contain;
-            border-radius: 5px;
+            object-fit: contain; border-radius: 5px;
+            animation: zoom 0.3s;
         }
-        /* 關閉按鈕 */
         .close {
             position: absolute; top: 20px; right: 30px;
             color: #f1f1f1; font-size: 40px; font-weight: bold;
-            transition: 0.3s; cursor: pointer; z-index: 10000;
+            cursor: pointer; z-index: 10000;
         }
-        .close:hover, .close:focus { color: #bbb; text-decoration: none; cursor: pointer; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        /* 針對放大圖片的動畫 */
-        .modal-content { animation: zoom 0.3s; }
         @keyframes zoom { from {transform:scale(0)} to {transform:scale(1)} }
 
     </style>
 </head>
 <body>
 
-    <div id="background-decorations"></div>
+    <div class="floating-container" id="floating-bg"></div>
 
     <header>
         <h1>🍠 大甲手搖抽抽樂 🥤</h1>
@@ -197,52 +212,74 @@
     </div>
 
     <div id="image-modal" class="modal" onclick="closeModal()">
-        <span class="close">&times;</span>
+        <span class="close">×</span>
         <img class="modal-content" id="img-in-modal">
     </div>
 
     <script>
-        // --- 1. 背景裝飾 ---
+        // --- 1. 背景裝飾產生器 (珍珠 + 大甲圖片 混搭) ---
         function initBackgroundDecorations() {
-            const container = document.getElementById('background-decorations');
-            const numItems = 20;
-            const decoTypes = [
-                { type: 'img', src: './images/deco-taro.png', alt: '🍠' }, 
-                { type: 'img', src: './images/deco-mazu.png', alt: '🙏' }, 
-                { type: 'img', src: './images/deco-cake.png', alt: '🥯' }, 
-                { type: 'img', src: './images/deco-hat.png',  alt: '👒' }  
+            const container = document.getElementById('floating-bg');
+            // 增加總數量，讓畫面豐富一點
+            const numItems = 30; 
+            
+            // 大甲特色圖片列表
+            const dajiaImages = [
+                { src: './images/deco-taro.png', alt: '🍠' }, 
+                { src: './images/deco-mazu.png', alt: '🙏' }, 
+                { src: './images/deco-cake.png', alt: '🥯' }, 
+                { src: './images/deco-hat.png',  alt: '👒' }
             ];
+
             for (let i = 0; i < numItems; i++) {
-                const randomType = decoTypes[Math.floor(Math.random() * decoTypes.length)];
-                let decoItem;
-                if (randomType.type === 'img') {
-                    decoItem = document.createElement('img');
-                    decoItem.src = randomType.src;
-                    decoItem.alt = randomType.alt;
-                    decoItem.classList.add('deco-item', 'deco-img');
-                    decoItem.onerror = function() {
+                // 機率控制：60% 產生半透明珍珠 (Boba)，40% 產生大甲圖片
+                if (Math.random() > 0.4) { 
+                    // --- 產生珍珠 (CSS Boba) ---
+                    const boba = document.createElement('div');
+                    boba.className = 'boba';
+                    // 隨機大小
+                    const size = Math.random() * 30 + 10 + 'px'; 
+                    boba.style.width = size;
+                    boba.style.height = size;
+                    boba.style.left = Math.random() * 100 + '%';
+                    boba.style.animationDelay = Math.random() * 10 + 's';
+                    boba.style.animationDuration = Math.random() * 5 + 8 + 's'; // 8~13秒
+                    container.appendChild(boba);
+
+                } else {
+                    // --- 產生大甲特色圖片 ---
+                    const randomImg = dajiaImages[Math.floor(Math.random() * dajiaImages.length)];
+                    const img = document.createElement('img');
+                    img.src = randomImg.src;
+                    img.alt = randomImg.alt;
+                    img.className = 'deco-img';
+                    
+                    // 圖片讀取失敗時變 Emoji
+                    img.onerror = function() {
                         const fallback = document.createElement('div');
-                        fallback.classList.add('deco-item');
+                        fallback.className = 'deco-item'; // 使用通用樣式
+                        fallback.style.position = 'absolute';
+                        fallback.style.fontSize = '30px';
+                        fallback.style.animation = 'floatUpIcon 15s infinite ease-in';
                         fallback.textContent = this.alt;
-                        applyRandomStyles(fallback);
+                        // 重新設定位置
+                        fallback.style.left = this.style.left;
+                        fallback.style.animationDelay = this.style.animationDelay;
+                        fallback.style.animationDuration = this.style.animationDuration;
                         if(this.parentNode) this.parentNode.replaceChild(fallback, this);
                     };
-                } else {
-                    decoItem = document.createElement('div');
-                    decoItem.textContent = randomType.alt;
-                    decoItem.classList.add('deco-item');
+
+                    img.style.left = Math.random() * 100 + '%';
+                    img.style.animationDelay = Math.random() * 12 + 's';
+                    img.style.animationDuration = Math.random() * 6 + 10 + 's'; // 10~16秒
+                    
+                    // 隨機大小縮放
+                    const scale = Math.random() * 0.5 + 0.8;
+                    img.style.width = (60 * scale) + 'px';
+                    
+                    container.appendChild(img);
                 }
-                if (decoItem.tagName !== 'IMG') { applyRandomStyles(decoItem); container.appendChild(decoItem); }
-                else { applyRandomStyles(decoItem); container.appendChild(decoItem); }
             }
-        }
-        function applyRandomStyles(element) {
-            element.style.left = Math.random() * 100 + '%';
-            element.style.animationDuration = (Math.random() * 10 + 10) + 's';
-            element.style.animationDelay = Math.random() * 15 + 's';
-            const scale = Math.random() * 0.5 + 0.7;
-            if (element.tagName === 'IMG') { element.style.width = (60 * scale) + 'px'; }
-            else { element.style.fontSize = (35 * scale) + 'px'; }
         }
         window.addEventListener('load', initBackgroundDecorations);
 
@@ -301,7 +338,7 @@
             const nameDisplay = document.getElementById('shop-name');
             const descDisplay = document.getElementById('shop-desc');
             const menuImg = document.getElementById('menu-img');
-            const modalImg = document.getElementById('img-in-modal'); // 燈箱裡的圖
+            const modalImg = document.getElementById('img-in-modal');
             const mapLink = document.getElementById('map-link');
             const btn = document.getElementById('draw-btn');
             const menuArea = document.getElementById('menu-area');
@@ -311,7 +348,6 @@
             nameDisplay.style.textShadow = "1px 1px 0px rgba(0,0,0,0.1)";
             descDisplay.style.display = "block";
             
-            // 同時設定 小圖 和 大圖 的來源
             menuImg.src = winner.menuUrl;
             modalImg.src = winner.menuUrl; 
 
@@ -330,7 +366,6 @@
         // --- 3. 圖片放大功能 (Lightbox) ---
         function openModal() {
             const modal = document.getElementById("image-modal");
-            // 只有當圖片載入成功時才開啟
             const menuImg = document.getElementById('menu-img');
             if (menuImg.src && menuImg.src !== window.location.href) {
                  modal.style.display = "flex";
