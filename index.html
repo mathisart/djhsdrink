@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大甲手搖抽抽樂 🥤</title>
+    <style>
+        /* --- 全域設定 --- */
+        body {
+            font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
+            background-color: #f3e5f5; /* 淺芋頭紫背景 */
+            color: #4a148c; /* 深紫色文字 */
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* --- 標題區 --- */
+        header { text-align: center; margin-bottom: 20px; }
+        h1 {
+            font-size: 2.2rem; margin: 10px 0; color: #6a1b9a;
+            text-shadow: 2px 2px 0px #ffd700; /* 媽祖金陰影 */
+        }
+        .subtitle { font-size: 1rem; color: #8e24aa; }
+
+        /* --- 主容器 --- */
+        .lucky-draw-container {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(106, 27, 154, 0.2);
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+            border: 3px solid #ffd700; /* 金色邊框 */
+        }
+
+        /* --- 店名顯示區 --- */
+        .result-box {
+            min-height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+            background-color: #fffde7;
+            border-radius: 10px;
+            border: 2px dashed #fbc02d;
+        }
+
+        #shop-name {
+            font-size: 2rem; font-weight: bold; color: #4a148c; margin: 0;
+        }
+
+        /* --- 按鈕 --- */
+        .draw-btn {
+            background: linear-gradient(45deg, #6a1b9a, #8e24aa);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.3rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(106, 27, 154, 0.4);
+            transition: transform 0.1s;
+            font-weight: bold;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .draw-btn:active { transform: scale(0.98); }
+        .draw-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* --- 菜單圖片區 --- */
+        .menu-container {
+            display: none; /* 預設隱藏 */
+            margin-top: 15px;
+            border-top: 2px solid #eee;
+            padding-top: 15px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .menu-img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+            min-height: 200px;
+            background-color: #eee;
+            object-fit: contain;
+        }
+
+        .menu-link {
+            display: block;
+            margin-top: 10px;
+            text-decoration: none;
+            color: #d81b60;
+            font-weight: bold;
+            font-size: 0.9rem;
+            padding: 10px;
+            background: #ffebee;
+            border-radius: 5px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div style="font-size: 2.5rem;">🏯🎲🥤</div>
+        <h1>大甲手搖抽抽樂</h1>
+        <div class="subtitle">媽祖保庇，今天喝這杯！</div>
+    </header>
+
+    <div class="lucky-draw-container">
+        <div class="result-box">
+            <h2 id="shop-name">???</h2>
+        </div>
+        
+        <button id="draw-btn" class="draw-btn" onclick="startDraw()">LUCKY DRAW</button>
+        
+        <div id="menu-area" class="menu-container">
+            <div style="text-align: left; font-size: 0.9rem; color: #666; margin-bottom: 5px;">👇 菜單請參考：</div>
+            
+            <img id="menu-img" class="menu-img" src="" alt="菜單讀取中">
+            
+            <a id="map-link" href="#" target="_blank" class="menu-link">📍 Google Maps 導航去買</a>
+        </div>
+    </div>
+
+    <script>
+        // --- 大甲手搖飲全明星名單 (12家) ---
+        const shops = [
+            { 
+                name: "八曜和茶", 
+                menuUrl: "./8yo.jpg", 
+                mapQuery: "八曜和茶 台中大甲門市" 
+            },
+            { 
+                name: "茶聚 CHAGE", 
+                menuUrl: "./chage.jpg", 
+                mapQuery: "茶聚大甲鎮瀾店" 
+            },
+            { 
+                name: "CoCo都可", 
+                menuUrl: "./coco.jpg", 
+                mapQuery: "CoCo都可 大甲店" 
+            },
+            { 
+                name: "茶湯會", 
+                menuUrl: "./tptea.jpg", 
+                mapQuery: "茶湯會 大甲鎮瀾店" 
+            },
+            { 
+                name: "麻古茶坊", 
+                menuUrl: "./macu.jpg", 
+                mapQuery: "麻古茶坊大甲鎮瀾店" 
+            },
+            { 
+                name: "可不可熟成紅茶", 
+                menuUrl: "./kebuke.jpg", 
+                mapQuery: "可不可熟成紅茶大甲店" 
+            },
+            { 
+                name: "50嵐", 
+                menuUrl: "./50lan.jpg", 
+                mapQuery: "50嵐大甲店" 
+            },
+            { 
+                name: "龜記茗品", 
+                menuUrl: "./guiji.jpg", 
+                mapQuery: "龜記茗品-大甲順天店" 
+            },
+            { 
+                name: "得正 Oolong Tea", 
+                menuUrl: "./dejeng.jpg", 
+                mapQuery: "得正#台中大甲計劃" 
+            },
+            { 
+                name: "大茗本位製茶堂", 
+                menuUrl: "./daming.jpg", 
+                mapQuery: "大茗本位製茶堂大甲" 
+            },
+            { 
+                name: "迷客夏 Milksha", 
+                menuUrl: "./milksha.jpg", 
+                mapQuery: "迷客夏大甲店" 
+            },
+            { 
+                name: "清心福全", 
+                menuUrl: "./chingshin.jpg", 
+                mapQuery: "清心福全大甲店" 
+            }
+        ];
+
+        let isDrawing = false;
+        let animationInterval;
+
+        function startDraw() {
+            if (isDrawing) return;
+            
+            isDrawing = true;
+            const btn = document.getElementById('draw-btn');
+            const nameDisplay = document.getElementById('shop-name');
+            const menuArea = document.getElementById('menu-area');
+            
+            // 介面重置
+            btn.disabled = true;
+            btn.textContent = "抽籤中...";
+            menuArea.style.display = "none"; 
+            nameDisplay.style.color = "#ccc"; 
+
+            // 動畫
+            let counter = 0;
+            const totalDuration = 1000; // 動畫跑1秒
+            const intervalTime = 50;    
+
+            animationInterval = setInterval(() => {
+                const randomIndex = Math.floor(Math.random() * shops.length);
+                nameDisplay.textContent = shops[randomIndex].name;
+                counter += intervalTime;
+
+                if (counter >= totalDuration) {
+                    clearInterval(animationInterval);
+                    finalizeDraw();
+                }
+            }, intervalTime);
+        }
+
+        function finalizeDraw() {
+            const finalIndex = Math.floor(Math.random() * shops.length);
+            const winner = shops[finalIndex];
+
+            const nameDisplay = document.getElementById('shop-name');
+            const menuImg = document.getElementById('menu-img');
+            const mapLink = document.getElementById('map-link');
+            const btn = document.getElementById('draw-btn');
+            const menuArea = document.getElementById('menu-area');
+
+            // 顯示中獎資訊
+            nameDisplay.textContent = winner.name;
+            nameDisplay.style.color = "#d81b60"; // 洋紅色
+            
+            // 設定菜單圖片與連結
+            menuImg.src = winner.menuUrl;
+            
+            // 處理圖片載入錯誤 (如果檔名打錯，顯示提示)
+            menuImg.onerror = function() {
+                this.src = ''; // 清空
+                this.alt = "⚠️ 找不到菜單圖片，請檢查 GitHub 檔名是否正確";
+            };
+
+            mapLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(winner.mapQuery)}`;
+            
+            // 顯示結果
+            menuArea.style.display = "block";
+            
+            btn.disabled = false;
+            btn.textContent = "不滿意？再抽一次";
+            isDrawing = false;
+        }
+    </script>
+</body>
+</html>
