@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大甲手搖抽抽樂 V10.0 🥤</title>
+    <title>大甲手搖抽抽樂 V10.2 🥤</title>
     <style>
         /* --- 1. 全域與背景設定 --- */
         body {
@@ -30,13 +30,13 @@
             z-index: 0; pointer-events: none; overflow: hidden;
         }
 
-        /* (A) CSS 珍珠 (半透明黑色) */
+        /* (A) CSS 珍珠 (半透明黑色) - 維持手繪風 */
         .boba {
             position: absolute; background: rgba(0, 0, 0, 0.2); border-radius: 50%;
             bottom: -60px; animation: floatUp 10s infinite ease-in;
         }
 
-        /* (B) CSS 櫻花瓣 (粉紅單片) */
+        /* (B) CSS 櫻花瓣 (單片) - 維持手繪風 */
         .sakura-petal {
             position: absolute;
             background: linear-gradient(120deg, #ffc0cb 0%, #ffb7b2 100%);
@@ -46,9 +46,11 @@
             animation: floatUpSakuraPetal 12s infinite linear;
         }
 
-        /* (C) 圖片裝飾通用樣式 (芋頭 + 珍奶 + 鳳梨 + 櫻花) */
+        /* (C) 圖片裝飾通用樣式 (讀取 images 資料夾內的圖片) */
         .deco-img {
-            position: absolute; opacity: 0.9; width: 80px; height: auto;
+            position: absolute; opacity: 0.9; 
+            /* 基礎大小設定 (縮小10%) */
+            width: 72px; height: auto;
             filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
             animation: floatUpIcon 15s infinite ease-in;
             bottom: -100px; 
@@ -224,15 +226,18 @@
     </div>
 
     <script>
-        // --- 1. 背景裝飾 ---
+        // --- 1. 背景裝飾 (修正與優化) ---
         function initBackgroundDecorations() {
             const container = document.getElementById('floating-bg');
             const numItems = 50; 
             
+            // 圖片資源：全部讀取您上傳到 images 資料夾的圖片
             const imageAssets = [
                 { src: './images/deco-taro.png', alt: '🍠' },          
                 { src: './images/deco-bubbletea.png', alt: '🧋' },
                 { src: './images/deco-pineapple.png', alt: '🍍' },
+                { src: './images/deco-pineapple.png', alt: '🍍' }, // 鳳梨加倍
+                { src: './images/deco-pineapple.png', alt: '🍍' }, // 鳳梨加倍
                 { src: './images/deco-sakura.png', alt: '🌸' }
             ];
 
@@ -241,31 +246,35 @@
                 let decoItem;
 
                 if (rand < 0.2) { 
+                    // CSS 珍珠 (半透明)
                     decoItem = document.createElement('div');
                     decoItem.className = 'boba';
-                    const size = Math.random() * 35 + 25 + 'px'; 
+                    const size = Math.random() * 31.5 + 22.5 + 'px'; // 縮小10%
                     decoItem.style.width = size; decoItem.style.height = size;
                 } else if (rand < 0.4) {
+                    // CSS 櫻花瓣 (單片)
                     decoItem = document.createElement('div');
                     decoItem.className = 'sakura-petal';
-                    const w = Math.random() * 20 + 25 + 'px'; 
-                    const h = Math.random() * 20 + 35 + 'px'; 
+                    const w = Math.random() * 18 + 22.5 + 'px'; // 縮小10%
+                    const h = Math.random() * 18 + 31.5 + 'px'; 
                     decoItem.style.width = w; decoItem.style.height = h;
                 } else {
+                    // 真實圖片 (隨機選)
                     const randomImg = imageAssets[Math.floor(Math.random() * imageAssets.length)];
                     decoItem = document.createElement('img');
                     decoItem.src = randomImg.src; 
                     decoItem.alt = randomImg.alt;
                     decoItem.className = 'deco-img';
+                    
                     decoItem.onerror = function() {
                         const fallback = document.createElement('div');
                         fallback.className = 'deco-img'; 
-                        fallback.style.fontSize = '40px';
+                        fallback.style.fontSize = '36px'; 
                         fallback.textContent = this.alt;
                         this.parentNode.replaceChild(fallback, this);
                     };
                     const scale = Math.random() * 0.5 + 1.0; 
-                    decoItem.style.width = (80 * scale) + 'px';
+                    decoItem.style.width = (72 * scale) + 'px'; // 基礎 72px (縮小10%)
                 }
 
                 decoItem.style.left = Math.random() * 100 + '%';
@@ -278,7 +287,7 @@
                 }
                 decoItem.style.animationDuration = duration + 's';
 
-                const delay = Math.random() * duration * -1;
+                const delay = Math.random() * duration * -1; // 負數延遲，開場即飄滿
                 decoItem.style.animationDelay = delay + 's';
                 
                 container.appendChild(decoItem);
@@ -286,7 +295,7 @@
         }
         window.addEventListener('load', initBackgroundDecorations);
 
-        // --- 2. 飲料店名單 (已修正大茗為 .jpg) ---
+        // --- 2. 飲料店名單 (依據您的截圖，大茗修正為 .jpg) ---
         const shops = [
             { name: "八曜和茶", menuUrl: "./8yo.png", mapQuery: "八曜和茶 台中大甲門市" }, 
             { name: "茶聚 CHAGE", menuUrl: "./chage.jpg", mapQuery: "茶聚大甲鎮瀾店" },
@@ -297,7 +306,7 @@
             { name: "50嵐", menuUrl: "./50lan.jpg", mapQuery: "50嵐大甲店" },
             { name: "龜記茗品", menuUrl: "./guiji.jpg", mapQuery: "龜記茗品-大甲順天店" },
             { name: "得正 Oolong Tea", menuUrl: "./dejeng.jpg", mapQuery: "得正#台中大甲計劃" },
-            /* 👇 修正：這裡改成 .jpg 了！ */
+            /* 👇 關鍵修正：這裡是大茗，改回 .jpg */
             { name: "大茗本位製茶堂", menuUrl: "./daming.jpg", mapQuery: "大茗本位製茶堂大甲" },
             { name: "迷客夏 Milksha", menuUrl: "./milksha.jpg", mapQuery: "迷客夏大甲店" },
             { name: "清心福全", menuUrl: "./chingshin.jpg", mapQuery: "清心福全大甲店" }
