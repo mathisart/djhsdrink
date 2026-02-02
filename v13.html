@@ -448,4 +448,227 @@
             { name: "龜記茗品", menuUrl: "./guiji.jpg", mapQuery: "龜記茗品-大甲順天店", phone: "0426805727" }, 
             { name: "得正 Oolong Tea", menuUrl: "./dejeng.jpg", mapQuery: "得正#台中大甲計劃", phone: "0426803722" }, 
             { name: "一沐日", menuUrl: "./yimuri.jpg", mapQuery: "一沐日 台中大甲店", phone: "0426865588" }, 
-            { name: "迷客夏 Milksha", menuUrl: "./milksha.jpg", mapQuery: "迷客夏大甲店", phone: "04268
+            { name: "迷客夏 Milksha", menuUrl: "./milksha.jpg", mapQuery: "迷客夏大甲店", phone: "0426805319" }, 
+            { name: "清心福全", menuUrl: "./chingshin.jpg", mapQuery: "清心福全大甲店", phone: "0426882861" } 
+        ];
+
+        let isRitualRunning = false;
+        let currentWinner = null;
+        let orderList = [];
+
+        function startRitual() {
+            if (isRitualRunning) return;
+            isRitualRunning = true;
+
+            const btn = document.getElementById('draw-btn');
+            const textArea = document.getElementById('text-area');
+            const moonArea = document.getElementById('moon-blocks-area');
+            const stickArea = document.getElementById('stick-area');
+            const statusText = document.getElementById('status-text');
+            const menuArea = document.getElementById('menu-area');
+            const shopDesc = document.getElementById('shop-desc');
+
+            btn.disabled = true;
+            menuArea.style.display = "none";
+            shopDesc.style.display = "none";
+            textArea.style.display = "none"; 
+            
+            orderList = [];
+            renderOrderList();
+
+            moonArea.style.display = "flex";
+            moonArea.classList.remove('saint-cup'); // 重置為擲筊前狀態
+            moonArea.classList.add('tossing');
+            statusText.style.display = "block";
+            statusText.innerText = "🙏 誠心擲筊中...";
+            
+            setTimeout(() => {
+                moonArea.classList.remove('tossing');
+                moonArea.classList.add('saint-cup'); 
+                statusText.innerText = "✨ 聖筊！(神明同意)";
+                
+                setTimeout(() => {
+                    moonArea.style.display = "none"; 
+                    stickArea.style.display = "flex"; 
+                    stickArea.classList.add('drawing-stick');
+                    statusText.innerText = "📜 抽籤中...";
+
+                    setTimeout(() => {
+                        stickArea.style.display = "none";
+                        stickArea.classList.remove('drawing-stick');
+                        statusText.style.display = "none";
+                        finalizeDraw(); 
+                    }, 1500);
+
+                }, 1000);
+
+            }, 1500);
+        }
+
+        function finalizeDraw() {
+            const finalIndex = Math.floor(Math.random() * shops.length);
+            currentWinner = shops[finalIndex]; 
+
+            const textArea = document.getElementById('text-area');
+            const nameDisplay = document.getElementById('shop-name');
+            const descDisplay = document.getElementById('shop-desc');
+            const menuImg = document.getElementById('menu-img');
+            const modalImg = document.getElementById('img-in-modal');
+            const mapLink = document.getElementById('map-link');
+            const phoneLink = document.getElementById('phone-link');
+            const btn = document.getElementById('draw-btn');
+            const menuArea = document.getElementById('menu-area');
+
+            textArea.style.display = "flex";
+            
+            nameDisplay.textContent = currentWinner.name;
+            nameDisplay.style.color = "#e73c7e"; 
+            nameDisplay.style.textShadow = "1px 1px 0px rgba(0,0,0,0.1)";
+            descDisplay.style.display = "block";
+            
+            menuImg.src = currentWinner.menuUrl;
+            modalImg.src = currentWinner.menuUrl; 
+
+            menuImg.onerror = function() {
+                this.src = ''; this.alt = "⚠️ 找不到圖片，請檢查 GitHub 檔名";
+                this.style.minHeight = "100px";
+            };
+            mapLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(currentWinner.mapQuery)}`;
+            phoneLink.href = `tel:${currentWinner.phone}`;
+            
+            menuArea.style.display = "block";
+            btn.disabled = false;
+            btn.textContent = "再求一支籤 🧧";
+            isRitualRunning = false;
+        }
+
+        // --- 點餐小本本邏輯 ---
+        function addOrder() {
+            const name = document.getElementById('input-name').value.trim();
+            const item = document.getElementById('input-item').value.trim();
+            const config = document.getElementById('input-config').value.trim();
+
+            if (!item) { alert("至少要填寫品項喔！"); return; }
+
+            orderList.push({ name, item, config });
+            renderOrderList();
+
+            document.getElementById('input-name').value = '';
+            document.getElementById('input-item').value = '';
+            document.getElementById('input-config').value = '';
+        }
+
+        function removeOrder(index) {
+            orderList.splice(index, 1);
+            renderOrderList();
+        }
+
+        function renderOrderList() {
+            const listEl = document.getElementById('order-list');
+            listEl.innerHTML = "";
+            orderList.forEach((order, index) => {
+                const li = document.createElement('li');
+                li.className = 'order-item';
+                li.innerHTML = `
+                    <span>${order.name ? order.name + ': ' : ''}${order.item} <small>(${order.config})</small></span>
+                    <span class="delete-btn" onclick="removeOrder(${index})">×</span>
+                `;
+                listEl.appendChild(li);
+            });
+        }
+
+        function copyAllOrders() {
+            if (!currentWinner) return;
+            
+            let text = `【訂購單】${currentWinner.name}\n`;
+            text += `電話：${currentWinner.phone}\n`;
+            text += `----------------\n`;
+            
+            if (orderList.length === 0) {
+                text += `(尚未新增訂單)\n`;
+            } else {
+                orderList.forEach((order, i) => {
+                    text += `${i+1}. ${order.name ? order.name : '一位'}：${order.item} ${order.config ? '('+order.config+')' : ''}\n`;
+                });
+                text += `----------------\n`;
+                text += `總共 ${orderList.length} 杯`;
+            }
+
+            navigator.clipboard.writeText(text).then(() => {
+                alert("✅ 訂購單已複製！\n可以直接貼給老闆或備忘錄囉！");
+            }).catch(err => alert("複製失敗"));
+        }
+
+        // --- 縮放與燈箱 ---
+        let scale = 1; let p1 = { x: 0, y: 0 }; let initialDistance = 0;
+        let isDragging = false; let startX, startY, translateX = 0, translateY = 0, lastTranslateX = 0, lastTranslateY = 0;
+
+        function openModal() {
+            const modal = document.getElementById("image-modal");
+            const menuImg = document.getElementById('menu-img');
+            const modalImg = document.getElementById('img-in-modal');
+            if (menuImg.src && menuImg.src !== window.location.href) {
+                 modal.style.display = "flex";
+                 scale = 1; translateX = 0; translateY = 0; lastTranslateX = 0; lastTranslateY = 0;
+                 modalImg.style.transform = `scale(1) translate(0px, 0px)`;
+            }
+        }
+        function closeModal() {
+            document.getElementById("image-modal").style.display = "none";
+        }
+
+        const modalImg = document.getElementById('img-in-modal');
+        const modal = document.getElementById('image-modal');
+
+        modal.addEventListener('touchstart', function(e) {
+            if (e.touches.length === 2) {
+                initialDistance = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+            } else if (e.touches.length === 1) {
+                isDragging = true; startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+            }
+        });
+
+        modal.addEventListener('touchmove', function(e) {
+            e.preventDefault(); 
+            if (e.touches.length === 2) {
+                const currentDistance = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+                if (initialDistance > 0) {
+                    const delta = currentDistance / initialDistance;
+                    let tempScale = scale * delta;
+                    tempScale = Math.min(Math.max(1, tempScale), 4);
+                    modalImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${tempScale})`;
+                }
+            } else if (e.touches.length === 1 && isDragging && scale > 1) {
+                const currentX = e.touches[0].clientX; const currentY = e.touches[0].clientY;
+                const diffX = currentX - startX; const diffY = currentY - startY;
+                translateX = lastTranslateX + diffX; translateY = lastTranslateY + diffY;
+                modalImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            }
+        });
+
+        modal.addEventListener('touchend', function(e) {
+            if (e.touches.length < 2) {
+                if(modalImg.style.transform.includes('scale')) {
+                    const match = modalImg.style.transform.match(/scale\(([^)]+)\)/);
+                    if(match) scale = parseFloat(match[1]);
+                }
+            }
+            if (e.touches.length === 0) {
+                isDragging = false; lastTranslateX = translateX; lastTranslateY = translateY;
+            }
+        });
+
+        function getFullMenuUrl() {
+            if (!currentWinner) return "";
+            return new URL(currentWinner.menuUrl, window.location.href).href;
+        }
+
+        function shareToLine() {
+            if (!currentWinner) return;
+            const fullMenuUrl = getFullMenuUrl();
+            const text = `🥳 大甲手搖抽籤結果：\n我們今天喝「${currentWinner.name}」！\n\n📜 菜單連結：\n${fullMenuUrl}\n\n👇 複製下方格式點餐：\n姓名：\n品項：\n糖度冰塊：\n\n📍 地圖導航：\nhttps://www.google.com/maps/search/?api=1&query=${encodeURIComponent(currentWinner.mapQuery)}`;
+            window.open(`https://line.me/R/msg/text/?${encodeURIComponent(text)}`, '_blank');
+        }
+    </script>
+</body>
+</html>
