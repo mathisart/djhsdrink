@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大甲手搖抽抽樂 V9.7 🥤</title>
+    <title>大甲手搖抽抽樂 V9.8 🥤</title>
     <style>
         /* --- 1. 全域與背景設定 --- */
         body {
@@ -30,23 +30,38 @@
             z-index: 0; pointer-events: none; overflow: hidden;
         }
 
+        /* ================= 定義各種飄浮元素樣式 ================= */
+        
         /* (A) CSS 珍珠 (半透明黑色) */
         .boba {
             position: absolute; background: rgba(0, 0, 0, 0.2); border-radius: 50%;
             bottom: -60px; animation: floatUp 10s infinite ease-in;
         }
 
-        /* (B) CSS 櫻花瓣 (粉紅) */
+        /* (B) CSS 櫻花瓣 (粉紅花瓣) */
         .sakura {
             position: absolute;
             background: linear-gradient(120deg, #ffc0cb 0%, #ffb7b2 100%);
-            border-radius: 100% 0 100% 0;
+            border-radius: 100% 0 100% 0; /* 花瓣形狀 */
             bottom: -60px; opacity: 0.85;
             box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-            animation: floatUpSakura 12s infinite linear;
+            animation: floatUpSakuraPetal 12s infinite linear;
         }
 
-        /* (C) 圖片裝飾通用樣式 (芋頭 + 珍奶 + 鳳梨) */
+        /* (C) CSS 櫻花朵 (整朵花) - 新增! 🌸 */
+        .sakura-flower {
+            position: absolute;
+            width: 35px; height: 35px; /* 基礎大小 */
+            /* 花蕊黃色 -> 花瓣粉色漸層 */
+            background: radial-gradient(circle at center, #fff59d 10%, #ffc0cb 35%, #ffb7b2 100%);
+            /* 利用 clip-path 剪裁出五瓣花形狀 */
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            bottom: -80px; opacity: 0.9;
+            filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.15));
+            animation: floatUpSakuraFlower 14s infinite linear;
+        }
+
+        /* (D) 圖片裝飾通用樣式 (芋頭 + 珍奶 + 鳳梨) */
         .deco-img {
             position: absolute; opacity: 0.9; width: 80px; height: auto;
             filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
@@ -55,17 +70,22 @@
         }
 
         /* --- 動畫定義 --- */
-        @keyframes floatUp { 
+        @keyframes floatUp { /* 珍珠 */
             0% { transform: translateY(0) rotate(0deg); opacity: 0; }
             20% { opacity: 0.6; }
             100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
         }
-        @keyframes floatUpSakura { 
+        @keyframes floatUpSakuraPetal { /* 花瓣 (翻轉飄落感) */
             0% { transform: translateY(0) rotate(0deg) skew(10deg); opacity: 0; }
             20% { opacity: 0.9; }
             100% { transform: translateY(-120vh) rotate(720deg) skew(0deg); opacity: 0; }
         }
-        @keyframes floatUpIcon { 
+        @keyframes floatUpSakuraFlower { /* 花朵 (緩慢旋轉上升) */
+            0% { transform: translateY(0) rotate(0deg) scale(0.9); opacity: 0; }
+            20% { opacity: 0.95; }
+            100% { transform: translateY(-120vh) rotate(360deg) scale(1.1); opacity: 0; }
+        }
+        @keyframes floatUpIcon { /* 圖片 */
             0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
             20% { opacity: 0.95; }
             100% { transform: translateY(-120vh) rotate(-180deg) scale(1.2); opacity: 0; }
@@ -224,15 +244,12 @@
     </div>
 
     <script>
-        // --- 1. 背景裝飾 (珍珠 + 櫻花 + 芋頭/珍奶/鳳梨 圖片) ---
+        // --- 1. 背景裝飾 (珍珠 + 櫻花瓣 + 櫻花朵 + 圖片) ---
         function initBackgroundDecorations() {
             const container = document.getElementById('floating-bg');
-            const numItems = 45; // 數量稍微增加，因為現在有很多好料
+            const numItems = 50; // 增加總數量
             
-            // 圖片資源：請確認您的圖片檔名！
-            // 1. deco-taro.png (芋頭)
-            // 2. deco-bubbletea.png (珍奶)
-            // 3. deco-pineapple.png (鳳梨 - 請確認檔名)
+            // 圖片資源
             const imageAssets = [
                 { src: './images/deco-taro.png', alt: '🍠' },          
                 { src: './images/deco-bubbletea.png', alt: '🧋' },
@@ -243,170 +260,24 @@
                 const rand = Math.random();
                 let decoItem;
 
-                if (rand < 0.25) { 
-                    // [25%] CSS 珍珠
+                if (rand < 0.2) { 
+                    // [20%] CSS 珍珠
                     decoItem = document.createElement('div');
                     decoItem.className = 'boba';
                     const size = Math.random() * 35 + 25 + 'px'; 
                     decoItem.style.width = size; decoItem.style.height = size;
 
-                } else if (rand < 0.5) {
-                    // [25%] CSS 櫻花瓣
+                } else if (rand < 0.4) {
+                    // [20%] CSS 櫻花瓣 (Petal)
                     decoItem = document.createElement('div');
                     decoItem.className = 'sakura';
                     const w = Math.random() * 20 + 25 + 'px'; 
                     const h = Math.random() * 20 + 35 + 'px'; 
                     decoItem.style.width = w; decoItem.style.height = h;
 
-                } else {
-                    // [50%] 圖片裝飾 (隨機選 芋頭 / 珍奶 / 鳳梨)
-                    const randomImg = imageAssets[Math.floor(Math.random() * imageAssets.length)];
-                    decoItem = document.createElement('img');
-                    decoItem.src = randomImg.src; 
-                    decoItem.alt = randomImg.alt;
-                    decoItem.className = 'deco-img';
-                    
-                    // 圖片讀不到時變文字
-                    decoItem.onerror = function() {
-                        const fallback = document.createElement('div');
-                        fallback.className = 'deco-img'; 
-                        fallback.style.fontSize = '40px';
-                        fallback.textContent = this.alt;
-                        this.parentNode.replaceChild(fallback, this);
-                    };
-                    
-                    const scale = Math.random() * 0.5 + 1.0; 
-                    decoItem.style.width = (80 * scale) + 'px';
-                }
-
-                // --- 負數延遲，讓畫面一開始就滿的 ---
-                decoItem.style.left = Math.random() * 100 + '%';
-                
-                let duration;
-                if (decoItem.tagName === 'IMG') {
-                     duration = Math.random() * 6 + 12; // 圖片飄 12~18s
-                } else {
-                     duration = Math.random() * 8 + 10; // CSS飄 10~18s
-                }
-                decoItem.style.animationDuration = duration + 's';
-
-                const delay = Math.random() * duration * -1;
-                decoItem.style.animationDelay = delay + 's';
-                
-                container.appendChild(decoItem);
-            }
-        }
-        window.addEventListener('load', initBackgroundDecorations);
-
-        // --- 2. 飲料店名單 ---
-        const shops = [
-            { name: "八曜和茶", menuUrl: "./8yo.png", mapQuery: "八曜和茶 台中大甲門市" }, 
-            { name: "茶聚 CHAGE", menuUrl: "./chage.jpg", mapQuery: "茶聚大甲鎮瀾店" },
-            { name: "CoCo都可", menuUrl: "./coco.jpg", mapQuery: "CoCo都可 大甲店" },
-            { name: "茶湯會", menuUrl: "./tptea.jpg", mapQuery: "茶湯會 大甲鎮瀾店" },
-            { name: "麻古茶坊", menuUrl: "./macu.jpg", mapQuery: "麻古茶坊大甲鎮瀾店" },
-            { name: "可不可熟成紅茶", menuUrl: "./kebuke.jpg", mapQuery: "可不可熟成紅茶大甲店" }, 
-            { name: "50嵐", menuUrl: "./50lan.jpg", mapQuery: "50嵐大甲店" },
-            { name: "龜記茗品", menuUrl: "./guiji.jpg", mapQuery: "龜記茗品-大甲順天店" },
-            { name: "得正 Oolong Tea", menuUrl: "./dejeng.jpg", mapQuery: "得正#台中大甲計劃" },
-            { name: "大茗本位製茶堂", menuUrl: "./daming.png", mapQuery: "大茗本位製茶堂大甲" },
-            { name: "迷客夏 Milksha", menuUrl: "./milksha.jpg", mapQuery: "迷客夏大甲店" },
-            { name: "清心福全", menuUrl: "./chingshin.jpg", mapQuery: "清心福全大甲店" }
-        ];
-
-        let isRitualRunning = false;
-
-        function startRitual() {
-            if (isRitualRunning) return;
-            isRitualRunning = true;
-
-            const btn = document.getElementById('draw-btn');
-            const textArea = document.getElementById('text-area');
-            const moonArea = document.getElementById('moon-blocks-area');
-            const stickArea = document.getElementById('stick-area');
-            const statusText = document.getElementById('status-text');
-            const menuArea = document.getElementById('menu-area');
-            const shopDesc = document.getElementById('shop-desc');
-
-            btn.disabled = true;
-            menuArea.style.display = "none";
-            shopDesc.style.display = "none";
-            textArea.style.display = "none"; 
-            
-            moonArea.style.display = "flex";
-            moonArea.classList.add('tossing');
-            moonArea.classList.remove('saint-cup');
-            statusText.style.display = "block";
-            statusText.innerText = "🙏 誠心擲筊中...";
-            
-            setTimeout(() => {
-                moonArea.classList.remove('tossing');
-                moonArea.classList.add('saint-cup'); 
-                statusText.innerText = "✨ 聖筊！(神明同意)";
-                
-                setTimeout(() => {
-                    moonArea.style.display = "none"; 
-                    stickArea.style.display = "flex"; 
-                    stickArea.classList.add('drawing-stick');
-                    statusText.innerText = "📜 抽籤中...";
-
-                    setTimeout(() => {
-                        stickArea.style.display = "none";
-                        stickArea.classList.remove('drawing-stick');
-                        statusText.style.display = "none";
-                        finalizeDraw(); 
-                    }, 1500);
-
-                }, 1000);
-
-            }, 1500);
-        }
-
-        function finalizeDraw() {
-            const finalIndex = Math.floor(Math.random() * shops.length);
-            const winner = shops[finalIndex];
-
-            const textArea = document.getElementById('text-area');
-            const nameDisplay = document.getElementById('shop-name');
-            const descDisplay = document.getElementById('shop-desc');
-            const menuImg = document.getElementById('menu-img');
-            const modalImg = document.getElementById('img-in-modal');
-            const mapLink = document.getElementById('map-link');
-            const btn = document.getElementById('draw-btn');
-            const menuArea = document.getElementById('menu-area');
-
-            textArea.style.display = "flex";
-            
-            nameDisplay.textContent = winner.name;
-            nameDisplay.style.color = "#e73c7e"; 
-            nameDisplay.style.textShadow = "1px 1px 0px rgba(0,0,0,0.1)";
-            descDisplay.style.display = "block";
-            
-            menuImg.src = winner.menuUrl;
-            modalImg.src = winner.menuUrl; 
-
-            menuImg.onerror = function() {
-                this.src = ''; this.alt = "⚠️ 找不到圖片，請檢查 GitHub 檔名";
-                this.style.minHeight = "100px";
-            };
-            mapLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(winner.mapQuery)}`;
-            
-            menuArea.style.display = "block";
-            btn.disabled = false;
-            btn.textContent = "再求一支籤 🧧";
-            isRitualRunning = false;
-        }
-
-        function openModal() {
-            const modal = document.getElementById("image-modal");
-            const menuImg = document.getElementById('menu-img');
-            if (menuImg.src && menuImg.src !== window.location.href) {
-                 modal.style.display = "flex";
-            }
-        }
-        function closeModal() {
-            document.getElementById("image-modal").style.display = "none";
-        }
-    </script>
-</body>
-</html>
+                } else if (rand < 0.55) {
+                    // [15%] CSS 櫻花朵 (Flower) - 新! 🌸
+                    decoItem = document.createElement('div');
+                    decoItem.className = 'sakura-flower';
+                    const size = Math.random() * 25 + 30 + 'px'; // 30-55px
+                    decoItem.style.width = size
