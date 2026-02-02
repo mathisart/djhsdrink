@@ -9,7 +9,455 @@
         body {
             font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
             background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大甲手搖抽抽樂 V11.0 🥤</title>
+    <style>
+        /* --- 1. 全域與背景設定 --- */
+        body {
+            font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
             background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #fff;
+            margin: 0; padding: 20px;
+            min-height: 100vh;
+            overflow-y: auto; overflow-x: hidden; 
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- 2. 飄浮背景容器 --- */
+        .floating-container {
+            position: fixed; width: 100%; height: 100%; top: 0; left: 0;
+            z-index: 0; pointer-events: none; overflow: hidden;
+        }
+
+        /* (A) CSS 珍珠 */
+        .boba {
+            position: absolute; background: rgba(0, 0, 0, 0.2); border-radius: 50%;
+            bottom: -60px; animation: floatUp 10s infinite ease-in;
+        }
+
+        /* (B) CSS 櫻花瓣 */
+        .sakura-petal {
+            position: absolute;
+            background: linear-gradient(120deg, #ffc0cb 0%, #ffb7b2 100%);
+            border-radius: 100% 0 100% 0;
+            bottom: -60px; opacity: 0.85;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            animation: floatUpSakuraPetal 12s infinite linear;
+        }
+
+        /* (C) 圖片裝飾 */
+        .deco-img {
+            position: absolute; opacity: 0.9; 
+            width: 72px; height: auto;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+            animation: floatUpIcon 15s infinite ease-in;
+            bottom: -100px; 
+        }
+
+        /* --- 動畫定義 --- */
+        @keyframes floatUp { 
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.6; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+        @keyframes floatUpSakuraPetal { 
+            0% { transform: translateY(0) rotate(0deg) skew(10deg); opacity: 0; }
+            20% { opacity: 0.9; }
+            100% { transform: translateY(-120vh) rotate(720deg) skew(0deg); opacity: 0; }
+        }
+        @keyframes floatUpIcon { 
+            0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
+            20% { opacity: 0.95; }
+            100% { transform: translateY(-120vh) rotate(-180deg) scale(1.2); opacity: 0; }
+        }
+
+        /* --- 3. 主容器 --- */
+        .main-container {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(15px);
+            padding: 30px 20px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            text-align: center;
+            max-width: 500px; width: 100%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            margin-top: 30px; margin-bottom: 50px;
+            position: relative; z-index: 10;
+        }
+
+        /* --- 4. 標題與按鈕 --- */
+        header { margin-bottom: 20px; z-index: 10; text-align: center; }
+        h1 {
+            font-size: 2.5rem; margin: 10px 0; color: #fff;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.2); font-weight: 900; letter-spacing: 2px;
+        }
+        .subtitle { font-size: 1.1rem; color: #fff; opacity: 0.95; text-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
+        .draw-btn {
+            background: #fff; color: #23a6d5; border: none;
+            padding: 18px 50px; font-size: 1.5rem; border-radius: 50px;
+            cursor: pointer; box-shadow: 0 10px 30px rgba(35, 166, 213, 0.3);
+            transition: all 0.3s; font-weight: 900; width: 100%; text-transform: uppercase;
+        }
+        .draw-btn:hover { 
+            transform: translateY(-5px) scale(1.02); 
+            box-shadow: 0 15px 40px rgba(35, 166, 213, 0.5); 
+            background: #23a6d5; color: #fff;
+        }
+        .draw-btn:disabled { background: #e0e0e0; color: #aaa; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* --- 5. 結果顯示區 (排版修正重點區域) --- */
+        .result-box-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 25px; padding: 25px 15px; margin-bottom: 30px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+            border: 2px solid rgba(255,255,255,0.8);
+            min-height: 160px; 
+            display: flex; flex-direction: column; 
+            justify-content: center; align-items: center;
+            overflow: hidden; position: relative;
+        }
+        
+        #shop-name { 
+            font-size: 2.0rem; font-weight: 900; color: #e73c7e; 
+            margin: 0 0 10px 0; line-height: 1.3;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
+            word-break: keep-all; 
+        }
+        
+        #shop-desc { 
+            font-size: 1rem; color: #e65100; font-weight: bold; display: none;
+            background-color: #fff3e0; padding: 8px 20px;
+            border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            white-space: nowrap; 
+        }
+
+        /* 擲筊動畫 */
+        .moon-blocks-wrapper { display: none; justify-content: center; gap: 20px; align-items: center; height: 100px; }
+        .moon-block { width: 60px; height: 30px; background: #d32f2f; border-radius: 0 0 60px 60px; position: relative; }
+        .tossing .moon-block { animation: toss 0.8s ease-in-out infinite; }
+        .tossing .moon-block:nth-child(2) { animation-delay: 0.1s; }
+        .saint-cup .moon-block:first-child { transform: rotate(0deg); background: #d32f2f; }
+        .saint-cup .moon-block:last-child { transform: rotate(180deg); background: #ffcdd2; border-radius: 60px 60px 0 0;} 
+        @keyframes toss { 0% { transform: translateY(0); } 50% { transform: translateY(-30px) rotate(360deg); } 100% { transform: translateY(0) rotate(720deg); } }
+
+        /* 抽籤動畫 */
+        .stick-wrapper { display: none; flex-direction: column; align-items: center; justify-content: flex-end; height: 120px; position: relative; }
+        .stick-box { width: 60px; height: 80px; background: linear-gradient(90deg, #8d6e63, #5d4037); border-radius: 5px; z-index: 2; }
+        .stick { width: 15px; height: 100px; background: #ffe0b2; border: 1px solid #ffcc80; position: absolute; bottom: 10px; z-index: 1; display: flex; justify-content: center; }
+        .stick::after { content: "吉"; color: #d32f2f; font-size: 12px; margin-top: 5px; font-weight: bold;}
+        .drawing-stick .stick { animation: rise 1s ease-out forwards; }
+        @keyframes rise { 0% { transform: translateY(0); } 50% { transform: translateY(10px); } 100% { transform: translateY(-60px); } }
+
+        .status-text { font-size: 1.5rem; color: #888; font-weight: bold; margin-top: 10px; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* --- 6. 菜單區與燈箱 --- */
+        .menu-container {
+            display: none; margin-top: 30px; background: #fff;
+            padding: 20px; border-radius: 25px; color: #333;
+            animation: fadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        .menu-img {
+            width: 100%; height: auto; border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 5px;
+            min-height: 200px; background-color: #f5f5f5; object-fit: contain;
+            cursor: zoom-in; border: 2px solid transparent; transition: border 0.2s;
+        }
+        .menu-img:hover { border: 2px solid #23a6d5; }
+        .click-hint { font-size: 0.9rem; color: #888; margin-bottom: 10px; display: block; }
+        
+        /* 動作按鈕群組 */
+        .action-buttons {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;
+        }
+        .menu-link, .share-btn {
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none; color: #fff; font-weight: bold; font-size: 1rem;
+            padding: 12px; border-radius: 50px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s; cursor: pointer; border: none;
+        }
+        .menu-link { background: linear-gradient(90deg, #e73c7e, #ee7752); }
+        .share-btn.line { background: #06c755; }
+        .share-btn.copy { background: #546e7a; }
+        .menu-link:hover, .share-btn:hover { transform: translateY(-3px); opacity: 0.9; }
+        .menu-link.full-width { grid-column: span 2; }
+
+        .modal {
+            display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; 
+            overflow: auto; background-color: rgba(0,0,0,0.9); backdrop-filter: blur(5px);
+            flex-direction: column; align-items: center; justify-content: center;
+        }
+        .modal-content {
+            margin: auto; display: block; max-width: 95%; max-height: 95vh;
+            object-fit: contain; border-radius: 5px; animation: zoom 0.3s;
+        }
+        .close {
+            position: absolute; top: 20px; right: 30px; color: #f1f1f1; 
+            font-size: 40px; font-weight: bold; cursor: pointer; z-index: 10000;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoom { from {transform:scale(0)} to {transform:scale(1)} }
+
+    </style>
+</head>
+<body>
+
+    <div class="floating-container" id="floating-bg"></div>
+
+    <header>
+        <h1>🍠 大甲手搖抽抽樂 🥤</h1>
+        <div class="subtitle">媽祖保庇 • 隨機選好茶</div>
+    </header>
+
+    <div class="main-container">
+        <div class="result-box-container">
+            <div id="text-area" class="result-box">
+                <h2 id="shop-name">天選好茶</h2>
+                <p id="shop-desc">🎉 聖筊！就決定喝這家！</p>
+            </div>
+            <div id="moon-blocks-area" class="moon-blocks-wrapper">
+                <div class="moon-block"></div><div class="moon-block"></div>
+            </div>
+            <div id="stick-area" class="stick-wrapper">
+                <div class="stick"></div><div class="stick-box"></div>
+            </div>
+            <div id="status-text" class="status-text" style="display: none;"></div>
+        </div>
+        
+        <button id="draw-btn" class="draw-btn" onclick="startRitual()">開始求籤 ✨</button>
+        
+        <div id="menu-area" class="menu-container">
+            <div style="text-align: left; font-size: 0.9rem; color: #666; margin-bottom: 10px; font-weight: bold;">👇 菜單請參考：</div>
+            <img id="menu-img" class="menu-img" src="" alt="菜單讀取中" onclick="openModal()">
+            <span class="click-hint">👆 點擊圖片可放大查看</span>
+            
+            <div class="action-buttons">
+                <a id="map-link" href="#" target="_blank" class="menu-link full-width">📍 Google Maps 導航</a>
+                <button class="share-btn line" onclick="shareToLine()">💬 LINE 揪團</button>
+                <button class="share-btn copy" onclick="copyResult()">📋 複製文字</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="image-modal" class="modal" onclick="closeModal()">
+        <span class="close">×</span>
+        <img class="modal-content" id="img-in-modal">
+    </div>
+
+    <script>
+        // --- 1. 背景裝飾 ---
+        function initBackgroundDecorations() {
+            const container = document.getElementById('floating-bg');
+            const numItems = 50; 
+            
+            // 圖片資源 (均等機率)
+            const imageAssets = [
+                { src: './images/deco-taro.png', alt: '🍠' },          
+                { src: './images/deco-bubbletea.png', alt: '🧋' },
+                { src: './images/deco-pineapple.png', alt: '🍍' },
+                { src: './images/deco-sakura.png', alt: '🌸' }
+            ];
+
+            for (let i = 0; i < numItems; i++) {
+                const rand = Math.random();
+                let decoItem;
+
+                if (rand < 0.2) { 
+                    decoItem = document.createElement('div');
+                    decoItem.className = 'boba';
+                    const size = Math.random() * 31.5 + 22.5 + 'px'; 
+                    decoItem.style.width = size; decoItem.style.height = size;
+                } else if (rand < 0.4) {
+                    decoItem = document.createElement('div');
+                    decoItem.className = 'sakura-petal';
+                    const w = Math.random() * 18 + 22.5 + 'px'; 
+                    const h = Math.random() * 18 + 31.5 + 'px'; 
+                    decoItem.style.width = w; decoItem.style.height = h;
+                } else {
+                    const randomImg = imageAssets[Math.floor(Math.random() * imageAssets.length)];
+                    decoItem = document.createElement('img');
+                    decoItem.src = randomImg.src; 
+                    decoItem.alt = randomImg.alt;
+                    decoItem.className = 'deco-img';
+                    
+                    decoItem.onerror = function() {
+                        const fallback = document.createElement('div');
+                        fallback.className = 'deco-img'; 
+                        fallback.style.fontSize = '36px'; 
+                        fallback.textContent = this.alt;
+                        this.parentNode.replaceChild(fallback, this);
+                    };
+                    const scale = Math.random() * 0.5 + 1.0; 
+                    decoItem.style.width = (72 * scale) + 'px'; 
+                }
+
+                decoItem.style.left = Math.random() * 100 + '%';
+                
+                let duration;
+                if (decoItem.tagName === 'IMG') {
+                     duration = Math.random() * 6 + 12; 
+                } else {
+                     duration = Math.random() * 8 + 10; 
+                }
+                decoItem.style.animationDuration = duration + 's';
+
+                const delay = Math.random() * duration * -1;
+                decoItem.style.animationDelay = delay + 's';
+                
+                container.appendChild(decoItem);
+            }
+        }
+        window.addEventListener('load', initBackgroundDecorations);
+
+        // --- 2. 飲料店名單 ---
+        const shops = [
+            { name: "八曜和茶", menuUrl: "./8yo.png", mapQuery: "八曜和茶 台中大甲門市" }, 
+            { name: "茶聚 CHAGE", menuUrl: "./chage.jpg", mapQuery: "茶聚大甲鎮瀾店" },
+            { name: "CoCo都可", menuUrl: "./coco.jpg", mapQuery: "CoCo都可 大甲店" },
+            { name: "茶湯會", menuUrl: "./tptea.jpg", mapQuery: "茶湯會 大甲鎮瀾店" },
+            { name: "麻古茶坊", menuUrl: "./macu.jpg", mapQuery: "麻古茶坊大甲鎮瀾店" },
+            { name: "可不可熟成紅茶", menuUrl: "./kebuke.jpg", mapQuery: "可不可熟成紅茶大甲店" }, 
+            { name: "50嵐", menuUrl: "./50lan.jpg", mapQuery: "50嵐大甲店" },
+            { name: "龜記茗品", menuUrl: "./guiji.jpg", mapQuery: "龜記茗品-大甲順天店" },
+            { name: "得正 Oolong Tea", menuUrl: "./dejeng.jpg", mapQuery: "得正#台中大甲計劃" },
+            { name: "大茗本位製茶堂", menuUrl: "./daming.jpg", mapQuery: "大茗本位製茶堂大甲" },
+            { name: "迷客夏 Milksha", menuUrl: "./milksha.jpg", mapQuery: "迷客夏大甲店" },
+            { name: "清心福全", menuUrl: "./chingshin.jpg", mapQuery: "清心福全大甲店" }
+        ];
+
+        let isRitualRunning = false;
+        let currentWinner = null;
+
+        function startRitual() {
+            if (isRitualRunning) return;
+            isRitualRunning = true;
+
+            const btn = document.getElementById('draw-btn');
+            const textArea = document.getElementById('text-area');
+            const moonArea = document.getElementById('moon-blocks-area');
+            const stickArea = document.getElementById('stick-area');
+            const statusText = document.getElementById('status-text');
+            const menuArea = document.getElementById('menu-area');
+            const shopDesc = document.getElementById('shop-desc');
+
+            btn.disabled = true;
+            menuArea.style.display = "none";
+            shopDesc.style.display = "none";
+            textArea.style.display = "none"; 
+            
+            moonArea.style.display = "flex";
+            moonArea.classList.add('tossing');
+            moonArea.classList.remove('saint-cup');
+            statusText.style.display = "block";
+            statusText.innerText = "🙏 誠心擲筊中...";
+            
+            setTimeout(() => {
+                moonArea.classList.remove('tossing');
+                moonArea.classList.add('saint-cup'); 
+                statusText.innerText = "✨ 聖筊！(神明同意)";
+                
+                setTimeout(() => {
+                    moonArea.style.display = "none"; 
+                    stickArea.style.display = "flex"; 
+                    stickArea.classList.add('drawing-stick');
+                    statusText.innerText = "📜 抽籤中...";
+
+                    setTimeout(() => {
+                        stickArea.style.display = "none";
+                        stickArea.classList.remove('drawing-stick');
+                        statusText.style.display = "none";
+                        finalizeDraw(); 
+                    }, 1500);
+
+                }, 1000);
+
+            }, 1500);
+        }
+
+        function finalizeDraw() {
+            const finalIndex = Math.floor(Math.random() * shops.length);
+            currentWinner = shops[finalIndex]; 
+
+            const textArea = document.getElementById('text-area');
+            const nameDisplay = document.getElementById('shop-name');
+            const descDisplay = document.getElementById('shop-desc');
+            const menuImg = document.getElementById('menu-img');
+            const modalImg = document.getElementById('img-in-modal');
+            const mapLink = document.getElementById('map-link');
+            const btn = document.getElementById('draw-btn');
+            const menuArea = document.getElementById('menu-area');
+
+            textArea.style.display = "flex";
+            
+            nameDisplay.textContent = currentWinner.name;
+            nameDisplay.style.color = "#e73c7e"; 
+            nameDisplay.style.textShadow = "1px 1px 0px rgba(0,0,0,0.1)";
+            descDisplay.style.display = "block";
+            
+            menuImg.src = currentWinner.menuUrl;
+            modalImg.src = currentWinner.menuUrl; 
+
+            menuImg.onerror = function() {
+                this.src = ''; this.alt = "⚠️ 找不到圖片，請檢查 GitHub 檔名";
+                this.style.minHeight = "100px";
+            };
+            mapLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(currentWinner.mapQuery)}`;
+            
+            menuArea.style.display = "block";
+            btn.disabled = false;
+            btn.textContent = "再求一支籤 🧧";
+            isRitualRunning = false;
+        }
+
+        function openModal() {
+            const modal = document.getElementById("image-modal");
+            const menuImg = document.getElementById('menu-img');
+            if (menuImg.src && menuImg.src !== window.location.href) {
+                 modal.style.display = "flex";
+            }
+        }
+        function closeModal() {
+            document.getElementById("image-modal").style.display = "none";
+        }
+
+        // --- 新增功能：分享到 LINE ---
+        function shareToLine() {
+            if (!currentWinner) return;
+            const text = `🥳 大甲手搖抽籤結果：\n我們今天喝「${currentWinner.name}」！\n\n📍 地圖導航：\nhttps://www.google.com/maps/search/?api=1&query=${encodeURIComponent(currentWinner.mapQuery)}`;
+            const url = `https://line.me/R/msg/text/?${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+
+        // --- 新增功能：複製文字 ---
+        function copyResult() {
+            if (!currentWinner) return;
+            const text = `🥳 大甲手搖抽籤結果：\n我們今天喝「${currentWinner.name}」！\n\n📍 地圖導航：\nhttps://www.google.com/maps/search/?api=1&query=${encodeURIComponent(currentWinner.mapQuery)}`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert("✅ 已複製揪團文字！\n趕快貼到群組去吧！");
+            }).catch(err => {
+                console.error('複製失敗', err);
+                alert("❌ 複製失敗，請手動複製。");
+            });
+        }
+    </script>
+</body>
+</html>
             animation: gradientBG 15s ease infinite;
             color: #fff;
             margin: 0; padding: 20px;
