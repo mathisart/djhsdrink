@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大甲手搖抽抽樂 V9.8 🥤</title>
+    <title>大甲手搖抽抽樂 V9.9 🥤</title>
     <style>
         /* --- 1. 全域與背景設定 --- */
         body {
@@ -30,38 +30,23 @@
             z-index: 0; pointer-events: none; overflow: hidden;
         }
 
-        /* ================= 定義各種飄浮元素樣式 ================= */
-        
         /* (A) CSS 珍珠 (半透明黑色) */
         .boba {
             position: absolute; background: rgba(0, 0, 0, 0.2); border-radius: 50%;
             bottom: -60px; animation: floatUp 10s infinite ease-in;
         }
 
-        /* (B) CSS 櫻花瓣 (粉紅花瓣) */
-        .sakura {
+        /* (B) CSS 櫻花瓣 (粉紅單片) */
+        .sakura-petal {
             position: absolute;
             background: linear-gradient(120deg, #ffc0cb 0%, #ffb7b2 100%);
-            border-radius: 100% 0 100% 0; /* 花瓣形狀 */
+            border-radius: 100% 0 100% 0;
             bottom: -60px; opacity: 0.85;
             box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
             animation: floatUpSakuraPetal 12s infinite linear;
         }
 
-        /* (C) CSS 櫻花朵 (整朵花) - 新增! 🌸 */
-        .sakura-flower {
-            position: absolute;
-            width: 35px; height: 35px; /* 基礎大小 */
-            /* 花蕊黃色 -> 花瓣粉色漸層 */
-            background: radial-gradient(circle at center, #fff59d 10%, #ffc0cb 35%, #ffb7b2 100%);
-            /* 利用 clip-path 剪裁出五瓣花形狀 */
-            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            bottom: -80px; opacity: 0.9;
-            filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.15));
-            animation: floatUpSakuraFlower 14s infinite linear;
-        }
-
-        /* (D) 圖片裝飾通用樣式 (芋頭 + 珍奶 + 鳳梨) */
+        /* (C) 圖片裝飾通用樣式 (芋頭 + 珍奶 + 鳳梨 + 櫻花) */
         .deco-img {
             position: absolute; opacity: 0.9; width: 80px; height: auto;
             filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
@@ -70,22 +55,17 @@
         }
 
         /* --- 動畫定義 --- */
-        @keyframes floatUp { /* 珍珠 */
+        @keyframes floatUp { 
             0% { transform: translateY(0) rotate(0deg); opacity: 0; }
             20% { opacity: 0.6; }
             100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
         }
-        @keyframes floatUpSakuraPetal { /* 花瓣 (翻轉飄落感) */
+        @keyframes floatUpSakuraPetal { 
             0% { transform: translateY(0) rotate(0deg) skew(10deg); opacity: 0; }
             20% { opacity: 0.9; }
             100% { transform: translateY(-120vh) rotate(720deg) skew(0deg); opacity: 0; }
         }
-        @keyframes floatUpSakuraFlower { /* 花朵 (緩慢旋轉上升) */
-            0% { transform: translateY(0) rotate(0deg) scale(0.9); opacity: 0; }
-            20% { opacity: 0.95; }
-            100% { transform: translateY(-120vh) rotate(360deg) scale(1.1); opacity: 0; }
-        }
-        @keyframes floatUpIcon { /* 圖片 */
+        @keyframes floatUpIcon { 
             0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
             20% { opacity: 0.95; }
             100% { transform: translateY(-120vh) rotate(-180deg) scale(1.2); opacity: 0; }
@@ -244,16 +224,21 @@
     </div>
 
     <script>
-        // --- 1. 背景裝飾 (珍珠 + 櫻花瓣 + 櫻花朵 + 圖片) ---
+        // --- 1. 背景裝飾 (珍珠 + 櫻花瓣 + 4種真實圖片) ---
         function initBackgroundDecorations() {
             const container = document.getElementById('floating-bg');
-            const numItems = 50; // 增加總數量
+            const numItems = 50; 
             
-            // 圖片資源
+            // 圖片資源：請確認您的圖片檔名！
+            // 1. deco-taro.png (芋頭)
+            // 2. deco-bubbletea.png (珍奶)
+            // 3. deco-pineapple.png (鳳梨)
+            // 4. deco-sakura.png (櫻花 - 新!)
             const imageAssets = [
                 { src: './images/deco-taro.png', alt: '🍠' },          
                 { src: './images/deco-bubbletea.png', alt: '🧋' },
-                { src: './images/deco-pineapple.png', alt: '🍍' }
+                { src: './images/deco-pineapple.png', alt: '🍍' },
+                { src: './images/deco-sakura.png', alt: '🌸' }
             ];
 
             for (let i = 0; i < numItems; i++) {
@@ -268,27 +253,22 @@
                     decoItem.style.width = size; decoItem.style.height = size;
 
                 } else if (rand < 0.4) {
-                    // [20%] CSS 櫻花瓣 (Petal)
+                    // [20%] CSS 櫻花瓣 (單片)
                     decoItem = document.createElement('div');
-                    decoItem.className = 'sakura';
+                    decoItem.className = 'sakura-petal';
                     const w = Math.random() * 20 + 25 + 'px'; 
                     const h = Math.random() * 20 + 35 + 'px'; 
                     decoItem.style.width = w; decoItem.style.height = h;
 
-                } else if (rand < 0.55) {
-                    // [15%] CSS 櫻花朵 (Flower) - 新! 🌸
-                    decoItem = document.createElement('div');
-                    decoItem.className = 'sakura-flower';
-                    const size = Math.random() * 25 + 30 + 'px'; // 30-55px
-                    decoItem.style.width = size; decoItem.style.height = size;
-
                 } else {
-                    // [45%] 圖片裝飾
+                    // [60%] 圖片裝飾 (隨機選 芋頭 / 珍奶 / 鳳梨 / 櫻花)
                     const randomImg = imageAssets[Math.floor(Math.random() * imageAssets.length)];
                     decoItem = document.createElement('img');
                     decoItem.src = randomImg.src; 
                     decoItem.alt = randomImg.alt;
                     decoItem.className = 'deco-img';
+                    
+                    // 圖片讀不到時變文字
                     decoItem.onerror = function() {
                         const fallback = document.createElement('div');
                         fallback.className = 'deco-img'; 
@@ -296,18 +276,19 @@
                         fallback.textContent = this.alt;
                         this.parentNode.replaceChild(fallback, this);
                     };
+                    
                     const scale = Math.random() * 0.5 + 1.0; 
                     decoItem.style.width = (80 * scale) + 'px';
                 }
 
-                // --- 負數延遲設定 ---
+                // --- 負數延遲，讓畫面一開始就滿的 ---
                 decoItem.style.left = Math.random() * 100 + '%';
                 
                 let duration;
                 if (decoItem.tagName === 'IMG') {
-                     duration = Math.random() * 6 + 12; 
+                     duration = Math.random() * 6 + 12; // 圖片 12~18s
                 } else {
-                     duration = Math.random() * 8 + 10; 
+                     duration = Math.random() * 8 + 10; // CSS 10~18s
                 }
                 decoItem.style.animationDuration = duration + 's';
 
