@@ -280,4 +280,154 @@
                     decoItem = document.createElement('div');
                     decoItem.className = 'sakura-flower';
                     const size = Math.random() * 25 + 30 + 'px'; // 30-55px
-                    decoItem.style.width = size
+                    decoItem.style.width = size; decoItem.style.height = size;
+
+                } else {
+                    // [45%] 圖片裝飾
+                    const randomImg = imageAssets[Math.floor(Math.random() * imageAssets.length)];
+                    decoItem = document.createElement('img');
+                    decoItem.src = randomImg.src; 
+                    decoItem.alt = randomImg.alt;
+                    decoItem.className = 'deco-img';
+                    decoItem.onerror = function() {
+                        const fallback = document.createElement('div');
+                        fallback.className = 'deco-img'; 
+                        fallback.style.fontSize = '40px';
+                        fallback.textContent = this.alt;
+                        this.parentNode.replaceChild(fallback, this);
+                    };
+                    const scale = Math.random() * 0.5 + 1.0; 
+                    decoItem.style.width = (80 * scale) + 'px';
+                }
+
+                // --- 負數延遲設定 ---
+                decoItem.style.left = Math.random() * 100 + '%';
+                
+                let duration;
+                if (decoItem.tagName === 'IMG') {
+                     duration = Math.random() * 6 + 12; 
+                } else {
+                     duration = Math.random() * 8 + 10; 
+                }
+                decoItem.style.animationDuration = duration + 's';
+
+                const delay = Math.random() * duration * -1;
+                decoItem.style.animationDelay = delay + 's';
+                
+                container.appendChild(decoItem);
+            }
+        }
+        window.addEventListener('load', initBackgroundDecorations);
+
+        // --- 2. 飲料店名單 ---
+        const shops = [
+            { name: "八曜和茶", menuUrl: "./8yo.png", mapQuery: "八曜和茶 台中大甲門市" }, 
+            { name: "茶聚 CHAGE", menuUrl: "./chage.jpg", mapQuery: "茶聚大甲鎮瀾店" },
+            { name: "CoCo都可", menuUrl: "./coco.jpg", mapQuery: "CoCo都可 大甲店" },
+            { name: "茶湯會", menuUrl: "./tptea.jpg", mapQuery: "茶湯會 大甲鎮瀾店" },
+            { name: "麻古茶坊", menuUrl: "./macu.jpg", mapQuery: "麻古茶坊大甲鎮瀾店" },
+            { name: "可不可熟成紅茶", menuUrl: "./kebuke.jpg", mapQuery: "可不可熟成紅茶大甲店" }, 
+            { name: "50嵐", menuUrl: "./50lan.jpg", mapQuery: "50嵐大甲店" },
+            { name: "龜記茗品", menuUrl: "./guiji.jpg", mapQuery: "龜記茗品-大甲順天店" },
+            { name: "得正 Oolong Tea", menuUrl: "./dejeng.jpg", mapQuery: "得正#台中大甲計劃" },
+            { name: "大茗本位製茶堂", menuUrl: "./daming.png", mapQuery: "大茗本位製茶堂大甲" },
+            { name: "迷客夏 Milksha", menuUrl: "./milksha.jpg", mapQuery: "迷客夏大甲店" },
+            { name: "清心福全", menuUrl: "./chingshin.jpg", mapQuery: "清心福全大甲店" }
+        ];
+
+        let isRitualRunning = false;
+
+        function startRitual() {
+            if (isRitualRunning) return;
+            isRitualRunning = true;
+
+            const btn = document.getElementById('draw-btn');
+            const textArea = document.getElementById('text-area');
+            const moonArea = document.getElementById('moon-blocks-area');
+            const stickArea = document.getElementById('stick-area');
+            const statusText = document.getElementById('status-text');
+            const menuArea = document.getElementById('menu-area');
+            const shopDesc = document.getElementById('shop-desc');
+
+            btn.disabled = true;
+            menuArea.style.display = "none";
+            shopDesc.style.display = "none";
+            textArea.style.display = "none"; 
+            
+            moonArea.style.display = "flex";
+            moonArea.classList.add('tossing');
+            moonArea.classList.remove('saint-cup');
+            statusText.style.display = "block";
+            statusText.innerText = "🙏 誠心擲筊中...";
+            
+            setTimeout(() => {
+                moonArea.classList.remove('tossing');
+                moonArea.classList.add('saint-cup'); 
+                statusText.innerText = "✨ 聖筊！(神明同意)";
+                
+                setTimeout(() => {
+                    moonArea.style.display = "none"; 
+                    stickArea.style.display = "flex"; 
+                    stickArea.classList.add('drawing-stick');
+                    statusText.innerText = "📜 抽籤中...";
+
+                    setTimeout(() => {
+                        stickArea.style.display = "none";
+                        stickArea.classList.remove('drawing-stick');
+                        statusText.style.display = "none";
+                        finalizeDraw(); 
+                    }, 1500);
+
+                }, 1000);
+
+            }, 1500);
+        }
+
+        function finalizeDraw() {
+            const finalIndex = Math.floor(Math.random() * shops.length);
+            const winner = shops[finalIndex];
+
+            const textArea = document.getElementById('text-area');
+            const nameDisplay = document.getElementById('shop-name');
+            const descDisplay = document.getElementById('shop-desc');
+            const menuImg = document.getElementById('menu-img');
+            const modalImg = document.getElementById('img-in-modal');
+            const mapLink = document.getElementById('map-link');
+            const btn = document.getElementById('draw-btn');
+            const menuArea = document.getElementById('menu-area');
+
+            textArea.style.display = "flex";
+            
+            nameDisplay.textContent = winner.name;
+            nameDisplay.style.color = "#e73c7e"; 
+            nameDisplay.style.textShadow = "1px 1px 0px rgba(0,0,0,0.1)";
+            descDisplay.style.display = "block";
+            
+            menuImg.src = winner.menuUrl;
+            modalImg.src = winner.menuUrl; 
+
+            menuImg.onerror = function() {
+                this.src = ''; this.alt = "⚠️ 找不到圖片，請檢查 GitHub 檔名";
+                this.style.minHeight = "100px";
+            };
+            mapLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(winner.mapQuery)}`;
+            
+            menuArea.style.display = "block";
+            btn.disabled = false;
+            btn.textContent = "再求一支籤 🧧";
+            isRitualRunning = false;
+        }
+
+        function openModal() {
+            const modal = document.getElementById("image-modal");
+            const menuImg = document.getElementById('menu-img');
+            if (menuImg.src && menuImg.src !== window.location.href) {
+                 modal.style.display = "flex";
+            }
+        }
+        function closeModal() {
+            document.getElementById("image-modal").style.display = "none";
+        }
+    </script>
+</body>
+</html>
