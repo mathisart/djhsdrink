@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>大甲手搖抽抽樂 V11.6 📱</title>
+    <title>大甲手搖抽抽樂 V11.7 📱</title>
     <style>
         /* --- 1. 全域與背景設定 --- */
         * { box-sizing: border-box; } 
@@ -84,13 +84,16 @@
             position: relative; z-index: 10;
         }
 
-        /* --- 4. 標題與按鈕 --- */
+        /* --- 4. 標題與按鈕 (本次修正重點) --- */
         header { margin-bottom: 15px; z-index: 10; text-align: center; width: 100%; }
         h1 {
-            font-size: clamp(1.8rem, 6vw, 2.5rem);
+            /* 調整 clamp 最小值，讓它在小螢幕能縮得更小 */
+            font-size: clamp(1.5rem, 6vw, 2.5rem);
             margin: 10px 0; color: #fff;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.2); font-weight: 900; letter-spacing: 2px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.2); font-weight: 900; 
+            letter-spacing: 2px;
             line-height: 1.2;
+            white-space: nowrap; /* ⚠️ 關鍵：強制不換行 */
         }
         .subtitle { font-size: 1rem; color: #fff; opacity: 0.95; text-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
@@ -109,7 +112,7 @@
         }
         .draw-btn:disabled { background: #e0e0e0; color: #aaa; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* --- 5. 結果顯示區 (並列排版修正) --- */
+        /* --- 5. 結果顯示區 --- */
         .result-box-container {
             background: rgba(255, 255, 255, 0.9);
             border-radius: 20px; 
@@ -125,21 +128,20 @@
             position: relative;
         }
 
-        /* 文字區域容器：設定為 Flex Row */
         #text-area {
             display: flex;
-            flex-direction: row; /* 水平並列 */
-            flex-wrap: wrap;     /* 重要：如果螢幕太窄，允許換行，防止被切掉 */
-            justify-content: center; /* 水平置中 */
-            align-items: center; /* 垂直置中 */
-            gap: 10px; /* 兩者間距 */
+            flex-direction: row; 
+            flex-wrap: wrap;     
+            justify-content: center; 
+            align-items: center; 
+            gap: 10px; 
             width: 100%;
         }
         
         #shop-name { 
             font-size: clamp(1.5rem, 8vw, 2.2rem); 
             font-weight: 900; color: #e73c7e; 
-            margin: 0; /* 移除所有外距，讓它跟旁邊的標籤對齊 */
+            margin: 0; 
             line-height: 1.2;
             text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
             word-break: keep-all; 
@@ -149,8 +151,8 @@
             font-size: 0.9rem; color: #e65100; font-weight: bold; display: none;
             background-color: #fff3e0; padding: 6px 12px;
             border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            white-space: nowrap; /* 保持標籤不換行 */
-            margin: 0; /* 移除外距 */
+            white-space: nowrap; 
+            margin: 0; 
         }
 
         /* 動畫元素 */
@@ -235,8 +237,14 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes zoom { from {transform:scale(0)} to {transform:scale(1)} }
 
+        /* 手機版微調 */
         @media (max-width: 480px) {
-            h1 { font-size: 1.8rem; }
+            h1 { 
+                letter-spacing: 1px; /* 字距縮小 */
+                /* 確保不會因為字太大撐爆容器 */
+                width: 100%; 
+                overflow: visible;
+            }
             .subtitle { font-size: 0.9rem; }
             .result-box-container { padding: 20px 5px; }
             #shop-name { font-size: 1.6rem; }
@@ -366,8 +374,7 @@
             { name: "50嵐", menuUrl: "./50lan.jpg", mapQuery: "50嵐大甲店" },
             { name: "龜記茗品", menuUrl: "./guiji.jpg", mapQuery: "龜記茗品-大甲順天店" },
             { name: "得正 Oolong Tea", menuUrl: "./dejeng.jpg", mapQuery: "得正#台中大甲計劃" },
-            /* 👇 名稱已修正為「大茗本位」 */
-            { name: "大茗本位製茶堂", menuUrl: "./daming.jpg", mapQuery: "大茗本位製茶堂大甲" },
+            { name: "大茗本位", menuUrl: "./daming.jpg", mapQuery: "大茗本位製茶堂大甲" },
             { name: "迷客夏 Milksha", menuUrl: "./milksha.jpg", mapQuery: "迷客夏大甲店" },
             { name: "清心福全", menuUrl: "./chingshin.jpg", mapQuery: "清心福全大甲店" }
         ];
