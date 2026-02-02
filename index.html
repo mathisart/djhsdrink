@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>大甲手搖抽抽樂 V11.5 📱</title>
+    <title>大甲手搖抽抽樂 V11.6 📱</title>
     <style>
         /* --- 1. 全域與背景設定 --- */
         * { box-sizing: border-box; } 
@@ -109,7 +109,7 @@
         }
         .draw-btn:disabled { background: #e0e0e0; color: #aaa; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* --- 5. 結果顯示區 --- */
+        /* --- 5. 結果顯示區 (並列排版修正) --- */
         .result-box-container {
             background: rgba(255, 255, 255, 0.9);
             border-radius: 20px; 
@@ -124,24 +124,33 @@
             overflow: visible;
             position: relative;
         }
+
+        /* 文字區域容器：設定為 Flex Row */
+        #text-area {
+            display: flex;
+            flex-direction: row; /* 水平並列 */
+            flex-wrap: wrap;     /* 重要：如果螢幕太窄，允許換行，防止被切掉 */
+            justify-content: center; /* 水平置中 */
+            align-items: center; /* 垂直置中 */
+            gap: 10px; /* 兩者間距 */
+            width: 100%;
+        }
         
         #shop-name { 
             font-size: clamp(1.5rem, 8vw, 2.2rem); 
             font-weight: 900; color: #e73c7e; 
-            margin: 0 0 10px 0; line-height: 1.2;
+            margin: 0; /* 移除所有外距，讓它跟旁邊的標籤對齊 */
+            line-height: 1.2;
             text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
             word-break: keep-all; 
-            max-width: 100%;
-            overflow-wrap: break-word;
         }
         
         #shop-desc { 
-            font-size: 0.95rem; color: #e65100; font-weight: bold; display: none;
-            background-color: #fff3e0; padding: 8px 15px;
+            font-size: 0.9rem; color: #e65100; font-weight: bold; display: none;
+            background-color: #fff3e0; padding: 6px 12px;
             border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            white-space: normal;
-            text-align: center;
-            line-height: 1.4;
+            white-space: nowrap; /* 保持標籤不換行 */
+            margin: 0; /* 移除外距 */
         }
 
         /* 動畫元素 */
@@ -357,7 +366,7 @@
             { name: "50嵐", menuUrl: "./50lan.jpg", mapQuery: "50嵐大甲店" },
             { name: "龜記茗品", menuUrl: "./guiji.jpg", mapQuery: "龜記茗品-大甲順天店" },
             { name: "得正 Oolong Tea", menuUrl: "./dejeng.jpg", mapQuery: "得正#台中大甲計劃" },
-            /* 👇 修正：改名為「大茗本位」 */
+            /* 👇 名稱已修正為「大茗本位」 */
             { name: "大茗本位", menuUrl: "./daming.jpg", mapQuery: "大茗本位製茶堂大甲" },
             { name: "迷客夏 Milksha", menuUrl: "./milksha.jpg", mapQuery: "迷客夏大甲店" },
             { name: "清心福全", menuUrl: "./chingshin.jpg", mapQuery: "清心福全大甲店" }
