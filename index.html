@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大甲手搖抽抽樂 V9.6 🥤</title>
+    <title>大甲手搖抽抽樂 V9.7 🥤</title>
     <style>
         /* --- 1. 全域與背景設定 --- */
         body {
@@ -30,13 +30,13 @@
             z-index: 0; pointer-events: none; overflow: hidden;
         }
 
-        /* (A) CSS 珍珠 */
+        /* (A) CSS 珍珠 (半透明黑色) */
         .boba {
             position: absolute; background: rgba(0, 0, 0, 0.2); border-radius: 50%;
             bottom: -60px; animation: floatUp 10s infinite ease-in;
         }
 
-        /* (B) CSS 櫻花瓣 */
+        /* (B) CSS 櫻花瓣 (粉紅) */
         .sakura {
             position: absolute;
             background: linear-gradient(120deg, #ffc0cb 0%, #ffb7b2 100%);
@@ -46,23 +46,7 @@
             animation: floatUpSakura 12s infinite linear;
         }
 
-        /* (C) CSS 鳳梨 */
-        .pineapple {
-            position: absolute; bottom: -80px; opacity: 0.9;
-            width: 40px; height: 55px; 
-            background: linear-gradient(to bottom, #fff59d, #fbc02d);
-            border-radius: 45% 45% 50% 50% / 60% 60% 40% 40%;
-            filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.15));
-            animation: floatUpCSS 14s infinite linear;
-        }
-        .pineapple::before { 
-            content: ''; position: absolute; top: -10px; left: 15%;
-            width: 70%; height: 15px;
-            background: #66bb6a; border-radius: 50% 50% 5px 5px;
-            clip-path: polygon(0% 100%, 20% 0%, 40% 60%, 60% 0%, 80% 60%, 100% 0%, 100% 100%);
-        }
-
-        /* (D) 圖片裝飾通用樣式 (芋頭 + 珍奶) */
+        /* (C) 圖片裝飾通用樣式 (芋頭 + 珍奶 + 鳳梨) */
         .deco-img {
             position: absolute; opacity: 0.9; width: 80px; height: auto;
             filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
@@ -80,11 +64,6 @@
             0% { transform: translateY(0) rotate(0deg) skew(10deg); opacity: 0; }
             20% { opacity: 0.9; }
             100% { transform: translateY(-120vh) rotate(720deg) skew(0deg); opacity: 0; }
-        }
-        @keyframes floatUpCSS { 
-            0% { transform: translateY(0) rotate(-10deg) scale(0.9); opacity: 0; }
-            20% { opacity: 1; }
-            100% { transform: translateY(-120vh) rotate(20deg) scale(1.1); opacity: 0; }
         }
         @keyframes floatUpIcon { 
             0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
@@ -245,15 +224,19 @@
     </div>
 
     <script>
-        // --- 1. 背景裝飾 (修正為負數延遲，讓畫面一開始就滿滿的) ---
+        // --- 1. 背景裝飾 (珍珠 + 櫻花 + 芋頭/珍奶/鳳梨 圖片) ---
         function initBackgroundDecorations() {
             const container = document.getElementById('floating-bg');
-            const numItems = 40; 
+            const numItems = 45; // 數量稍微增加，因為現在有很多好料
             
-            // 圖片資源
+            // 圖片資源：請確認您的圖片檔名！
+            // 1. deco-taro.png (芋頭)
+            // 2. deco-bubbletea.png (珍奶)
+            // 3. deco-pineapple.png (鳳梨 - 請確認檔名)
             const imageAssets = [
                 { src: './images/deco-taro.png', alt: '🍠' },          
-                { src: './images/deco-bubbletea.png', alt: '🧋' }    
+                { src: './images/deco-bubbletea.png', alt: '🧋' },
+                { src: './images/deco-pineapple.png', alt: '🍍' }
             ];
 
             for (let i = 0; i < numItems; i++) {
@@ -275,20 +258,15 @@
                     const h = Math.random() * 20 + 35 + 'px'; 
                     decoItem.style.width = w; decoItem.style.height = h;
 
-                } else if (rand < 0.7) {
-                    // [20%] CSS 鳳梨
-                    decoItem = document.createElement('div');
-                    decoItem.className = 'pineapple';
-                    const scale = Math.random() * 0.4 + 0.8; 
-                    decoItem.style.transform = `scale(${scale})`;
-
                 } else {
-                    // [30%] 圖片裝飾 (芋頭 + 珍奶)
+                    // [50%] 圖片裝飾 (隨機選 芋頭 / 珍奶 / 鳳梨)
                     const randomImg = imageAssets[Math.floor(Math.random() * imageAssets.length)];
                     decoItem = document.createElement('img');
                     decoItem.src = randomImg.src; 
                     decoItem.alt = randomImg.alt;
                     decoItem.className = 'deco-img';
+                    
+                    // 圖片讀不到時變文字
                     decoItem.onerror = function() {
                         const fallback = document.createElement('div');
                         fallback.className = 'deco-img'; 
@@ -296,24 +274,22 @@
                         fallback.textContent = this.alt;
                         this.parentNode.replaceChild(fallback, this);
                     };
+                    
                     const scale = Math.random() * 0.5 + 1.0; 
                     decoItem.style.width = (80 * scale) + 'px';
                 }
 
-                // --- 關鍵修正：使用負數 delay ---
+                // --- 負數延遲，讓畫面一開始就滿的 ---
                 decoItem.style.left = Math.random() * 100 + '%';
                 
-                // 動畫總長度
                 let duration;
                 if (decoItem.tagName === 'IMG') {
-                     duration = Math.random() * 6 + 12; // 12~18s
+                     duration = Math.random() * 6 + 12; // 圖片飄 12~18s
                 } else {
-                     duration = Math.random() * 8 + 10; // 10~18s
+                     duration = Math.random() * 8 + 10; // CSS飄 10~18s
                 }
                 decoItem.style.animationDuration = duration + 's';
 
-                // 負數延遲：讓它從動畫的中間開始播放
-                // 例如：動畫長度 15s，延遲 -7s，表示它已經飄了一半了
                 const delay = Math.random() * duration * -1;
                 decoItem.style.animationDelay = delay + 's';
                 
