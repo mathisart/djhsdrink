@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大甲手搖抽抽樂 V10.2 🥤</title>
+    <title>大甲手搖抽抽樂 V10.4 🥤</title>
     <style>
         /* --- 1. 全域與背景設定 --- */
         body {
@@ -30,13 +30,13 @@
             z-index: 0; pointer-events: none; overflow: hidden;
         }
 
-        /* (A) CSS 珍珠 (半透明黑色) - 維持手繪風 */
+        /* (A) CSS 珍珠 */
         .boba {
             position: absolute; background: rgba(0, 0, 0, 0.2); border-radius: 50%;
             bottom: -60px; animation: floatUp 10s infinite ease-in;
         }
 
-        /* (B) CSS 櫻花瓣 (單片) - 維持手繪風 */
+        /* (B) CSS 櫻花瓣 */
         .sakura-petal {
             position: absolute;
             background: linear-gradient(120deg, #ffc0cb 0%, #ffb7b2 100%);
@@ -46,10 +46,9 @@
             animation: floatUpSakuraPetal 12s infinite linear;
         }
 
-        /* (C) 圖片裝飾通用樣式 (讀取 images 資料夾內的圖片) */
+        /* (C) 圖片裝飾 */
         .deco-img {
             position: absolute; opacity: 0.9; 
-            /* 基礎大小設定 (縮小10%) */
             width: 72px; height: auto;
             filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
             animation: floatUpIcon 15s infinite ease-in;
@@ -108,21 +107,43 @@
         }
         .draw-btn:disabled { background: #e0e0e0; color: #aaa; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* --- 5. 結果顯示區 --- */
+        /* --- 5. 結果顯示區 (排版修正重點區域) --- */
         .result-box-container {
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 25px; padding: 20px; margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.9); /* 稍微不透明一點，讓文字更清楚 */
+            border-radius: 25px; padding: 25px 15px; margin-bottom: 30px;
             box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
             border: 2px solid rgba(255,255,255,0.8);
-            min-height: 150px; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            min-height: 160px; 
+            /* ⚠️ 強制垂直排列，避免左右亂跑 */
+            display: flex; flex-direction: column; 
+            justify-content: center; align-items: center;
             overflow: hidden; position: relative;
         }
+        
         #shop-name { 
-            font-size: 2.4rem; font-weight: 900; color: #e73c7e; margin: 0; 
+            /* 調整字體大小，避免長名字換行太醜 */
+            font-size: 2.0rem; 
+            font-weight: 900; 
+            color: #e73c7e; 
+            margin: 0 0 10px 0; /* 下方留空隙 */
+            line-height: 1.3;
             text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
+            word-break: keep-all; /* 盡量不切斷中文字 */
         }
-        #shop-desc { font-size: 1.1rem; color: #ee7752; margin-top: 10px; font-weight: bold; display: none; }
+        
+        #shop-desc { 
+            font-size: 1rem; 
+            color: #e65100; /* 深橘色文字 */
+            font-weight: bold; 
+            display: none;
+            
+            /* 標籤樣式 (Badge Style) */
+            background-color: #fff3e0; /* 淺橘底色 */
+            padding: 8px 20px;
+            border-radius: 50px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            white-space: nowrap; /* 不讓祝賀詞換行 */
+        }
 
         /* 擲筊動畫 */
         .moon-blocks-wrapper { display: none; justify-content: center; gap: 20px; align-items: center; height: 100px; }
@@ -226,12 +247,12 @@
     </div>
 
     <script>
-        // --- 1. 背景裝飾 (修正與優化) ---
+        // --- 1. 背景裝飾 ---
         function initBackgroundDecorations() {
             const container = document.getElementById('floating-bg');
             const numItems = 50; 
             
-            // 圖片資源：全部讀取您上傳到 images 資料夾的圖片
+            // 圖片資源 (回復均等機率)
             const imageAssets = [
                 { src: './images/deco-taro.png', alt: '🍠' },          
                 { src: './images/deco-bubbletea.png', alt: '🧋' },
@@ -244,20 +265,20 @@
                 let decoItem;
 
                 if (rand < 0.2) { 
-                    // CSS 珍珠 (半透明)
+                    // CSS 珍珠
                     decoItem = document.createElement('div');
                     decoItem.className = 'boba';
-                    const size = Math.random() * 31.5 + 22.5 + 'px'; // 縮小10%
+                    const size = Math.random() * 31.5 + 22.5 + 'px'; 
                     decoItem.style.width = size; decoItem.style.height = size;
                 } else if (rand < 0.4) {
-                    // CSS 櫻花瓣 (單片)
+                    // CSS 櫻花瓣
                     decoItem = document.createElement('div');
                     decoItem.className = 'sakura-petal';
-                    const w = Math.random() * 18 + 22.5 + 'px'; // 縮小10%
+                    const w = Math.random() * 18 + 22.5 + 'px'; 
                     const h = Math.random() * 18 + 31.5 + 'px'; 
                     decoItem.style.width = w; decoItem.style.height = h;
                 } else {
-                    // 真實圖片 (隨機選)
+                    // 圖片裝飾 (隨機選)
                     const randomImg = imageAssets[Math.floor(Math.random() * imageAssets.length)];
                     decoItem = document.createElement('img');
                     decoItem.src = randomImg.src; 
@@ -272,7 +293,7 @@
                         this.parentNode.replaceChild(fallback, this);
                     };
                     const scale = Math.random() * 0.5 + 1.0; 
-                    decoItem.style.width = (72 * scale) + 'px'; // 基礎 72px (縮小10%)
+                    decoItem.style.width = (72 * scale) + 'px'; 
                 }
 
                 decoItem.style.left = Math.random() * 100 + '%';
@@ -285,7 +306,7 @@
                 }
                 decoItem.style.animationDuration = duration + 's';
 
-                const delay = Math.random() * duration * -1; // 負數延遲，開場即飄滿
+                const delay = Math.random() * duration * -1;
                 decoItem.style.animationDelay = delay + 's';
                 
                 container.appendChild(decoItem);
@@ -293,7 +314,7 @@
         }
         window.addEventListener('load', initBackgroundDecorations);
 
-        // --- 2. 飲料店名單 (依據您的截圖，大茗修正為 .jpg) ---
+        // --- 2. 飲料店名單 ---
         const shops = [
             { name: "八曜和茶", menuUrl: "./8yo.png", mapQuery: "八曜和茶 台中大甲門市" }, 
             { name: "茶聚 CHAGE", menuUrl: "./chage.jpg", mapQuery: "茶聚大甲鎮瀾店" },
