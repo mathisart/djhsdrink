@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>大甲手搖抽抽樂 V13.0 📱</title>
+    <title>大甲手搖抽抽樂 V13.3 📱</title>
     <style>
         /* --- 1. 全域與背景設定 --- */
         * { box-sizing: border-box; } 
@@ -154,7 +154,18 @@
         .stick-wrapper { display: none; flex-direction: column; align-items: center; justify-content: flex-end; height: 120px; position: relative; }
         .stick-box { width: 60px; height: 80px; background: linear-gradient(90deg, #8d6e63, #5d4037); border-radius: 5px; z-index: 2; }
         .stick { width: 15px; height: 100px; background: #ffe0b2; border: 1px solid #ffcc80; position: absolute; bottom: 10px; z-index: 1; display: flex; justify-content: center; }
-        .stick::after { content: "吉"; color: #d32f2f; font-size: 12px; margin-top: 5px; font-weight: bold;}
+        
+        /* 👇 修改點：上上籤樣式 */
+        .stick::after { 
+            content: "上上籤"; 
+            color: #d32f2f; 
+            font-size: 10px; 
+            margin-top: 5px; 
+            font-weight: bold;
+            writing-mode: vertical-rl; /* 垂直排列 */
+            letter-spacing: 1px;
+        }
+        
         .drawing-stick .stick { animation: rise 1s ease-out forwards; }
         @keyframes rise { 0% { transform: translateY(0); } 50% { transform: translateY(10px); } 100% { transform: translateY(-60px); } }
 
@@ -196,7 +207,7 @@
         .menu-link:hover, .share-btn:hover { transform: translateY(-3px); opacity: 0.9; }
         .menu-link.full-width { grid-column: span 2; }
 
-        /* --- 7. (新增) 點餐小本本區塊 --- */
+        /* --- 7. 點餐小本本區塊 --- */
         .order-pad {
             margin-top: 20px;
             padding: 15px;
@@ -321,8 +332,7 @@
                     <input type="text" id="input-config" class="order-input" placeholder="糖冰" style="width: 25%;">
                     <button class="add-btn" onclick="addOrder()">+</button>
                 </div>
-                <ul id="order-list">
-                    </ul>
+                <ul id="order-list"></ul>
                 <button class="copy-all-btn" onclick="copyAllOrders()">📋 複製完整訂購單</button>
             </div>
         </div>
@@ -400,23 +410,23 @@
 
         // --- 2. 飲料店名單 ---
         const shops = [
-            { name: "八曜和茶", menuUrl: "./8yo.png", mapQuery: "八曜和茶 台中大甲門市", phone: "0426880000" }, 
-            { name: "茶聚 CHAGE", menuUrl: "./chage.jpg", mapQuery: "茶聚大甲鎮瀾店", phone: "0426880000" },
-            { name: "CoCo都可", menuUrl: "./coco.jpg", mapQuery: "CoCo都可 大甲店", phone: "0426880000" },
-            { name: "茶湯會", menuUrl: "./tptea.jpg", mapQuery: "茶湯會 大甲鎮瀾店", phone: "0426880000" },
-            { name: "麻古茶坊", menuUrl: "./macu.jpg", mapQuery: "麻古茶坊大甲鎮瀾店", phone: "0426880000" },
-            { name: "可不可熟成紅茶", menuUrl: "./kebuke.jpg", mapQuery: "可不可熟成紅茶大甲店", phone: "0426880000" }, 
-            { name: "50嵐", menuUrl: "./50lan.jpg", mapQuery: "50嵐大甲店", phone: "0426880000" },
-            { name: "龜記茗品", menuUrl: "./guiji.jpg", mapQuery: "龜記茗品-大甲順天店", phone: "0426880000" },
-            { name: "得正 Oolong Tea", menuUrl: "./dejeng.jpg", mapQuery: "得正#台中大甲計劃", phone: "0426880000" },
-            { name: "大茗本位", menuUrl: "./daming.jpg", mapQuery: "大茗本位製茶堂大甲", phone: "0426880000" },
-            { name: "迷客夏 Milksha", menuUrl: "./milksha.jpg", mapQuery: "迷客夏大甲店", phone: "0426880000" },
-            { name: "清心福全", menuUrl: "./chingshin.jpg", mapQuery: "清心福全大甲店", phone: "0426880000" }
+            { name: "八曜和茶", menuUrl: "./8yo.png", mapQuery: "八曜和茶 台中大甲門市", phone: "0426888988" }, 
+            { name: "茶聚 CHAGE", menuUrl: "./chage.jpg", mapQuery: "茶聚大甲鎮瀾店", phone: "0426883652" }, 
+            { name: "CoCo都可", menuUrl: "./coco.jpg", mapQuery: "CoCo都可 大甲店", phone: "0426888806" }, 
+            { name: "茶湯會", menuUrl: "./tptea.jpg", mapQuery: "茶湯會 大甲鎮瀾店", phone: "0426889118" }, 
+            { name: "麻古茶坊", menuUrl: "./macu.jpg", mapQuery: "麻古茶坊大甲鎮瀾店", phone: "0426889996" }, 
+            { name: "可不可熟成紅茶", menuUrl: "./kebuke.jpg", mapQuery: "可不可熟成紅茶大甲店", phone: "0426887553" }, 
+            { name: "50嵐", menuUrl: "./50lan.jpg", mapQuery: "50嵐大甲店", phone: "0426880150" }, 
+            { name: "龜記茗品", menuUrl: "./guiji.jpg", mapQuery: "龜記茗品-大甲順天店", phone: "0426805727" }, 
+            { name: "得正 Oolong Tea", menuUrl: "./dejeng.jpg", mapQuery: "得正#台中大甲計劃", phone: "0426803722" }, 
+            { name: "一沐日", menuUrl: "./yimuri.jpg", mapQuery: "一沐日 台中大甲店", phone: "0426865588" }, 
+            { name: "迷客夏 Milksha", menuUrl: "./milksha.jpg", mapQuery: "迷客夏大甲店", phone: "0426805319" }, 
+            { name: "清心福全", menuUrl: "./chingshin.jpg", mapQuery: "清心福全大甲店", phone: "0426882861" } 
         ];
 
         let isRitualRunning = false;
         let currentWinner = null;
-        let orderList = []; // 儲存點餐資料
+        let orderList = [];
 
         function startRitual() {
             if (isRitualRunning) return;
@@ -435,7 +445,6 @@
             shopDesc.style.display = "none";
             textArea.style.display = "none"; 
             
-            // 清空上一家的點餐列表 (換家就要重點)
             orderList = [];
             renderOrderList();
 
@@ -516,7 +525,6 @@
             orderList.push({ name, item, config });
             renderOrderList();
 
-            // 清空輸入框
             document.getElementById('input-name').value = '';
             document.getElementById('input-item').value = '';
             document.getElementById('input-config').value = '';
@@ -563,18 +571,14 @@
             }).catch(err => alert("複製失敗"));
         }
 
-        // --- 其他工具 ---
-        let scale = 1;
-        let p1 = { x: 0, y: 0 };
-        let initialDistance = 0;
-        let isDragging = false;
-        let startX, startY, translateX = 0, translateY = 0, lastTranslateX = 0, lastTranslateY = 0;
+        // --- 縮放與燈箱 ---
+        let scale = 1; let p1 = { x: 0, y: 0 }; let initialDistance = 0;
+        let isDragging = false; let startX, startY, translateX = 0, translateY = 0, lastTranslateX = 0, lastTranslateY = 0;
 
         function openModal() {
             const modal = document.getElementById("image-modal");
             const menuImg = document.getElementById('menu-img');
             const modalImg = document.getElementById('img-in-modal');
-            
             if (menuImg.src && menuImg.src !== window.location.href) {
                  modal.style.display = "flex";
                  scale = 1; translateX = 0; translateY = 0; lastTranslateX = 0; lastTranslateY = 0;
