@@ -2,19 +2,21 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大甲手搖抽抽樂 V11.0 🥤</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>大甲手搖抽抽樂 V11.1 📱</title>
     <style>
-        /* --- 1. 全域與背景設定 --- */
+        /* --- 1. 全域與背景設定 (加入 CSS Reset 防止跑版) --- */
+        * { box-sizing: border-box; } /* 關鍵修正：確保寬度包含框線與內距 */
+
         body {
             font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
             background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
             color: #fff;
-            margin: 0; padding: 20px;
+            margin: 0; padding: 20px 10px; /* 手機版左右留白稍微縮小 */
             min-height: 100vh;
-            overflow-y: auto; overflow-x: hidden; 
+            overflow-x: hidden; /* 防止水平捲軸 */
             display: flex; flex-direction: column; align-items: center;
         }
 
@@ -30,13 +32,11 @@
             z-index: 0; pointer-events: none; overflow: hidden;
         }
 
-        /* (A) CSS 珍珠 */
+        /* 裝飾元素樣式 */
         .boba {
             position: absolute; background: rgba(0, 0, 0, 0.2); border-radius: 50%;
             bottom: -60px; animation: floatUp 10s infinite ease-in;
         }
-
-        /* (B) CSS 櫻花瓣 */
         .sakura-petal {
             position: absolute;
             background: linear-gradient(120deg, #ffc0cb 0%, #ffb7b2 100%);
@@ -45,8 +45,6 @@
             box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
             animation: floatUpSakuraPetal 12s infinite linear;
         }
-
-        /* (C) 圖片裝飾 */
         .deco-img {
             position: absolute; opacity: 0.9; 
             width: 72px; height: auto;
@@ -55,7 +53,7 @@
             bottom: -100px; 
         }
 
-        /* --- 動畫定義 --- */
+        /* 動畫定義 */
         @keyframes floatUp { 
             0% { transform: translateY(0) rotate(0deg); opacity: 0; }
             20% { opacity: 0.6; }
@@ -72,31 +70,34 @@
             100% { transform: translateY(-120vh) rotate(-180deg) scale(1.2); opacity: 0; }
         }
 
-        /* --- 3. 主容器 --- */
+        /* --- 3. 主容器 (修正手機寬度) --- */
         .main-container {
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(15px);
-            padding: 30px 20px;
-            border-radius: 40px;
+            padding: 25px 20px;
+            border-radius: 30px;
             border: 1px solid rgba(255, 255, 255, 0.5);
             text-align: center;
-            max-width: 500px; width: 100%;
+            max-width: 500px; 
+            width: 95%; /* 手機版佔 95% 寬度，避免切邊 */
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
-            margin-top: 30px; margin-bottom: 50px;
+            margin-top: 20px; margin-bottom: 50px;
             position: relative; z-index: 10;
         }
 
         /* --- 4. 標題與按鈕 --- */
-        header { margin-bottom: 20px; z-index: 10; text-align: center; }
+        header { margin-bottom: 20px; z-index: 10; text-align: center; width: 100%; }
         h1 {
-            font-size: 2.5rem; margin: 10px 0; color: #fff;
+            font-size: 2.2rem; /* 稍微縮小預設字體 */
+            margin: 10px 0; color: #fff;
             text-shadow: 0 4px 10px rgba(0,0,0,0.2); font-weight: 900; letter-spacing: 2px;
+            line-height: 1.2;
         }
-        .subtitle { font-size: 1.1rem; color: #fff; opacity: 0.95; text-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .subtitle { font-size: 1rem; color: #fff; opacity: 0.95; text-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
         .draw-btn {
             background: #fff; color: #23a6d5; border: none;
-            padding: 18px 50px; font-size: 1.5rem; border-radius: 50px;
+            padding: 15px 30px; font-size: 1.4rem; border-radius: 50px;
             cursor: pointer; box-shadow: 0 10px 30px rgba(35, 166, 213, 0.3);
             transition: all 0.3s; font-weight: 900; width: 100%; text-transform: uppercase;
         }
@@ -107,10 +108,10 @@
         }
         .draw-btn:disabled { background: #e0e0e0; color: #aaa; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* --- 5. 結果顯示區 (排版修正重點區域) --- */
+        /* --- 5. 結果顯示區 --- */
         .result-box-container {
             background: rgba(255, 255, 255, 0.9);
-            border-radius: 25px; padding: 25px 15px; margin-bottom: 30px;
+            border-radius: 20px; padding: 20px 10px; margin-bottom: 25px;
             box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
             border: 2px solid rgba(255,255,255,0.8);
             min-height: 160px; 
@@ -120,20 +121,22 @@
         }
         
         #shop-name { 
-            font-size: 2.0rem; font-weight: 900; color: #e73c7e; 
+            font-size: 1.8rem; /* 手機閱讀較舒適的大小 */
+            font-weight: 900; color: #e73c7e; 
             margin: 0 0 10px 0; line-height: 1.3;
             text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
             word-break: keep-all; 
+            padding: 0 5px; /* 防止文字貼邊 */
         }
         
         #shop-desc { 
-            font-size: 1rem; color: #e65100; font-weight: bold; display: none;
-            background-color: #fff3e0; padding: 8px 20px;
+            font-size: 0.95rem; color: #e65100; font-weight: bold; display: none;
+            background-color: #fff3e0; padding: 8px 15px;
             border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             white-space: nowrap; 
         }
 
-        /* 擲筊動畫 */
+        /* 動畫元素 */
         .moon-blocks-wrapper { display: none; justify-content: center; gap: 20px; align-items: center; height: 100px; }
         .moon-block { width: 60px; height: 30px; background: #d32f2f; border-radius: 0 0 60px 60px; position: relative; }
         .tossing .moon-block { animation: toss 0.8s ease-in-out infinite; }
@@ -142,7 +145,6 @@
         .saint-cup .moon-block:last-child { transform: rotate(180deg); background: #ffcdd2; border-radius: 60px 60px 0 0;} 
         @keyframes toss { 0% { transform: translateY(0); } 50% { transform: translateY(-30px) rotate(360deg); } 100% { transform: translateY(0) rotate(720deg); } }
 
-        /* 抽籤動畫 */
         .stick-wrapper { display: none; flex-direction: column; align-items: center; justify-content: flex-end; height: 120px; position: relative; }
         .stick-box { width: 60px; height: 80px; background: linear-gradient(90deg, #8d6e63, #5d4037); border-radius: 5px; z-index: 2; }
         .stick { width: 15px; height: 100px; background: #ffe0b2; border: 1px solid #ffcc80; position: absolute; bottom: 10px; z-index: 1; display: flex; justify-content: center; }
@@ -150,35 +152,36 @@
         .drawing-stick .stick { animation: rise 1s ease-out forwards; }
         @keyframes rise { 0% { transform: translateY(0); } 50% { transform: translateY(10px); } 100% { transform: translateY(-60px); } }
 
-        .status-text { font-size: 1.5rem; color: #888; font-weight: bold; margin-top: 10px; animation: pulse 1s infinite; }
+        .status-text { font-size: 1.4rem; color: #888; font-weight: bold; margin-top: 10px; animation: pulse 1s infinite; }
         @keyframes pulse { 0% { opacity: 0.5; } 100% { opacity: 1; } }
 
         /* --- 6. 菜單區與燈箱 --- */
         .menu-container {
-            display: none; margin-top: 30px; background: #fff;
-            padding: 20px; border-radius: 25px; color: #333;
+            display: none; margin-top: 25px; background: #fff;
+            padding: 15px; border-radius: 20px; color: #333;
             animation: fadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
             box-shadow: 0 15px 40px rgba(0,0,0,0.15);
         }
         .menu-img {
-            width: 100%; height: auto; border-radius: 15px;
+            width: 100%; height: auto; border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 5px;
-            min-height: 200px; background-color: #f5f5f5; object-fit: contain;
+            min-height: 150px; background-color: #f5f5f5; object-fit: contain;
             cursor: zoom-in; border: 2px solid transparent; transition: border 0.2s;
         }
         .menu-img:hover { border: 2px solid #23a6d5; }
-        .click-hint { font-size: 0.9rem; color: #888; margin-bottom: 10px; display: block; }
+        .click-hint { font-size: 0.85rem; color: #888; margin-bottom: 10px; display: block; }
         
-        /* 動作按鈕群組 */
+        /* 動作按鈕群組 - 手機優化 */
         .action-buttons {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;
         }
         .menu-link, .share-btn {
             display: flex; align-items: center; justify-content: center;
-            text-decoration: none; color: #fff; font-weight: bold; font-size: 1rem;
-            padding: 12px; border-radius: 50px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-decoration: none; color: #fff; font-weight: bold; font-size: 0.95rem; /* 字體稍微縮小適配手機 */
+            padding: 10px 5px; border-radius: 50px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             transition: transform 0.2s; cursor: pointer; border: none;
+            white-space: nowrap; /* 避免文字換行 */
         }
         .menu-link { background: linear-gradient(90deg, #e73c7e, #ee7752); }
         .share-btn.line { background: #06c755; }
@@ -192,15 +195,26 @@
             flex-direction: column; align-items: center; justify-content: center;
         }
         .modal-content {
-            margin: auto; display: block; max-width: 95%; max-height: 95vh;
+            margin: auto; display: block; max-width: 95%; max-height: 90vh;
             object-fit: contain; border-radius: 5px; animation: zoom 0.3s;
         }
         .close {
-            position: absolute; top: 20px; right: 30px; color: #f1f1f1; 
+            position: absolute; top: 15px; right: 25px; color: #f1f1f1; 
             font-size: 40px; font-weight: bold; cursor: pointer; z-index: 10000;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes zoom { from {transform:scale(0)} to {transform:scale(1)} }
+
+        /* --- 手機版特別調整 (Media Queries) --- */
+        @media (max-width: 480px) {
+            h1 { font-size: 1.8rem; } /* 手機標題再縮小 */
+            .subtitle { font-size: 0.9rem; }
+            .result-box-container { padding: 20px 5px; } /* 減少內距 */
+            #shop-name { font-size: 1.6rem; }
+            .draw-btn { font-size: 1.2rem; padding: 12px 20px; }
+            /* 避免按鈕文字爆開，字太長會自動縮小 */
+            .menu-link, .share-btn { font-size: 0.85rem; padding: 10px 2px; }
+        }
 
     </style>
 </head>
@@ -254,7 +268,6 @@
             const container = document.getElementById('floating-bg');
             const numItems = 50; 
             
-            // 圖片資源 (均等機率)
             const imageAssets = [
                 { src: './images/deco-taro.png', alt: '🍠' },          
                 { src: './images/deco-bubbletea.png', alt: '🧋' },
@@ -424,18 +437,31 @@
             document.getElementById("image-modal").style.display = "none";
         }
 
-        // --- 新增功能：分享到 LINE ---
+        // --- 功能更新：自動組合完整連結 ---
+        function getFullMenuUrl() {
+            // 利用 window.location.href 取得當前網頁的網址基底
+            // 然後跟相對路徑 (./xxx.jpg) 結合成絕對路徑 (https://...)
+            if (!currentWinner) return "";
+            return new URL(currentWinner.menuUrl, window.location.href).href;
+        }
+
+        // --- 分享到 LINE (加入菜單連結) ---
         function shareToLine() {
             if (!currentWinner) return;
-            const text = `🥳 大甲手搖抽籤結果：\n我們今天喝「${currentWinner.name}」！\n\n📍 地圖導航：\nhttps://www.google.com/maps/search/?api=1&query=${encodeURIComponent(currentWinner.mapQuery)}`;
+            const fullMenuUrl = getFullMenuUrl();
+            
+            const text = `🥳 大甲手搖抽籤結果：\n我們今天喝「${currentWinner.name}」！\n\n📜 菜單連結：\n${fullMenuUrl}\n\n📍 地圖導航：\nhttps://www.google.com/maps/search/?api=1&query=${encodeURIComponent(currentWinner.mapQuery)}`;
+            
             const url = `https://line.me/R/msg/text/?${encodeURIComponent(text)}`;
             window.open(url, '_blank');
         }
 
-        // --- 新增功能：複製文字 ---
+        // --- 複製文字 (加入菜單連結) ---
         function copyResult() {
             if (!currentWinner) return;
-            const text = `🥳 大甲手搖抽籤結果：\n我們今天喝「${currentWinner.name}」！\n\n📍 地圖導航：\nhttps://www.google.com/maps/search/?api=1&query=${encodeURIComponent(currentWinner.mapQuery)}`;
+            const fullMenuUrl = getFullMenuUrl();
+
+            const text = `🥳 大甲手搖抽籤結果：\n我們今天喝「${currentWinner.name}」！\n\n📜 菜單連結：\n${fullMenuUrl}\n\n📍 地圖導航：\nhttps://www.google.com/maps/search/?api=1&query=${encodeURIComponent(currentWinner.mapQuery)}`;
             
             navigator.clipboard.writeText(text).then(() => {
                 alert("✅ 已複製揪團文字！\n趕快貼到群組去吧！");
