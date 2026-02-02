@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>大甲手搖抽抽樂 V13.7 📱</title>
+    <title>大甲手搖抽抽樂 V13.8 📱</title>
     <style>
         /* --- 1. 全域與背景設定 --- */
         * { box-sizing: border-box; } 
@@ -148,7 +148,7 @@
         .tossing .moon-block { animation: toss 0.8s ease-in-out infinite; }
         .tossing .moon-block:nth-child(2) { animation-delay: 0.1s; }
         
-        /* 聖筊狀態，直徑面對面 (V13.5) */
+        /* 聖筊狀態 (維持修正後的面對面) */
         .saint-cup { gap: 2px; }
         .saint-cup .moon-block:first-child { transform: rotate(90deg); background: #d32f2f; }
         .saint-cup .moon-block:last-child { border-radius: 60px 60px 0 0; transform: rotate(90deg); background: #ffcdd2; }
@@ -158,27 +158,26 @@
         .stick-wrapper { display: none; flex-direction: column; align-items: center; justify-content: flex-end; height: 120px; position: relative; }
         .stick-box { width: 60px; height: 80px; background: linear-gradient(90deg, #8d6e63, #5d4037); border-radius: 5px; z-index: 2; }
         
-        /* 👇 V13.7 修改點：籤身樣式調整 (靠上、置中) */
+        /* 👇 修改點：回歸 11.7 版的籤身邏輯 (justify-content: center) */
         .stick { 
             width: 15px; height: 100px; background: #ffe0b2; border: 1px solid #ffcc80; 
             position: absolute; bottom: 10px; z-index: 1; 
             display: flex; 
-            justify-content: flex-start; /* 改為靠上對齊 */
-            align-items: center;         /* 新增：左右置中對齊 */
-            padding-top: 12px;           /* 改為上方留白 */
+            justify-content: center; /* 回歸置中，不靠下也不靠上 */
             box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
         }
         
-        /* 👇 V13.7 修改點：增強浮雕立體感 */
+        /* 👇 修改點：回歸 11.7 版的 margin-top 推擠邏輯 */
         .stick::after { 
             content: "上上籤"; 
-            color: #d32f2f; /*稍微亮一點的紅，配合高光*/
+            color: #d32f2f; 
             font-size: 11px; 
             font-weight: 900;
-            margin-top: 0; 
             writing-mode: vertical-rl;
             letter-spacing: 2px;
-            /* 強烈的浮雕效果：左上白高光 + 右下深陰影 */
+            margin-top: 10px; /* 利用 margin-top 來控制它在上方的位置 */
+            
+            /* 保留立體浮雕 */
             text-shadow: 
                 -1px -1px 1px rgba(255, 255, 255, 0.9),
                  1px  1px 2px rgba(0, 0, 0, 0.5);
@@ -426,7 +425,7 @@
         }
         window.addEventListener('load', initBackgroundDecorations);
 
-        // --- 2. 飲料店名單 (已替換：一沐日 04-26865588) ---
+        // --- 2. 飲料店名單 (一沐日) ---
         const shops = [
             { name: "八曜和茶", menuUrl: "./8yo.png", mapQuery: "八曜和茶 台中大甲門市", phone: "0426888988" }, 
             { name: "茶聚 CHAGE", menuUrl: "./chage.jpg", mapQuery: "茶聚大甲鎮瀾店", phone: "0426883652" }, 
