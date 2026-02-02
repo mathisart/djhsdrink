@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>大甲手搖抽抽樂 V13.5 📱</title>
+    <title>大甲手搖抽抽樂 V13.6 📱</title>
     <style>
         /* --- 1. 全域與背景設定 --- */
         * { box-sizing: border-box; } 
@@ -148,34 +148,23 @@
         .tossing .moon-block { animation: toss 0.8s ease-in-out infinite; }
         .tossing .moon-block:nth-child(2) { animation-delay: 0.1s; }
         
-        /* 👇 V13.5 修改點：修正聖筊角度，確保直徑面對面 */
-        .saint-cup {
-             gap: 2px;
-        }
-        .saint-cup .moon-block:first-child {
-            /* 左筊：改成轉 90度，讓圓弧在左，平面在右 */
-            transform: rotate(90deg);
-            background: #d32f2f;
-        }
-        .saint-cup .moon-block:last-child {
-            /* 右筊：形狀維持(圓頂平底)，改成轉 90度，讓平面在左，圓弧在右 */
-            border-radius: 60px 60px 0 0;
-            transform: rotate(90deg);
-            background: #ffcdd2;
-        }
+        /* 聖筊狀態，直徑面對面 (V13.5) */
+        .saint-cup { gap: 2px; }
+        .saint-cup .moon-block:first-child { transform: rotate(90deg); background: #d32f2f; }
+        .saint-cup .moon-block:last-child { border-radius: 60px 60px 0 0; transform: rotate(90deg); background: #ffcdd2; }
 
         @keyframes toss { 0% { transform: translateY(0); } 50% { transform: translateY(-30px) rotate(360deg); } 100% { transform: translateY(0) rotate(720deg); } }
 
         .stick-wrapper { display: none; flex-direction: column; align-items: center; justify-content: flex-end; height: 120px; position: relative; }
         .stick-box { width: 60px; height: 80px; background: linear-gradient(90deg, #8d6e63, #5d4037); border-radius: 5px; z-index: 2; }
         
-        /* 籤身樣式 (V13.4) */
+        /* 👇 V13.6 修改點：籤身樣式調整 (文字置底) */
         .stick { 
             width: 15px; height: 100px; background: #ffe0b2; border: 1px solid #ffcc80; 
             position: absolute; bottom: 10px; z-index: 1; 
             display: flex; 
-            justify-content: flex-start;
-            padding-top: 2px;
+            justify-content: flex-end; /* 改為靠下對齊 */
+            padding-bottom: 8px; /* 改為下方留白 */
             box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
         }
         
