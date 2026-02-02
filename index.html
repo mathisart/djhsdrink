@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大甲手搖抽抽樂 V9.9 🥤</title>
+    <title>大甲手搖抽抽樂 V10.0 🥤</title>
     <style>
         /* --- 1. 全域與背景設定 --- */
         body {
@@ -224,16 +224,11 @@
     </div>
 
     <script>
-        // --- 1. 背景裝飾 (珍珠 + 櫻花瓣 + 4種真實圖片) ---
+        // --- 1. 背景裝飾 ---
         function initBackgroundDecorations() {
             const container = document.getElementById('floating-bg');
             const numItems = 50; 
             
-            // 圖片資源：請確認您的圖片檔名！
-            // 1. deco-taro.png (芋頭)
-            // 2. deco-bubbletea.png (珍奶)
-            // 3. deco-pineapple.png (鳳梨)
-            // 4. deco-sakura.png (櫻花 - 新!)
             const imageAssets = [
                 { src: './images/deco-taro.png', alt: '🍠' },          
                 { src: './images/deco-bubbletea.png', alt: '🧋' },
@@ -246,29 +241,22 @@
                 let decoItem;
 
                 if (rand < 0.2) { 
-                    // [20%] CSS 珍珠
                     decoItem = document.createElement('div');
                     decoItem.className = 'boba';
                     const size = Math.random() * 35 + 25 + 'px'; 
                     decoItem.style.width = size; decoItem.style.height = size;
-
                 } else if (rand < 0.4) {
-                    // [20%] CSS 櫻花瓣 (單片)
                     decoItem = document.createElement('div');
                     decoItem.className = 'sakura-petal';
                     const w = Math.random() * 20 + 25 + 'px'; 
                     const h = Math.random() * 20 + 35 + 'px'; 
                     decoItem.style.width = w; decoItem.style.height = h;
-
                 } else {
-                    // [60%] 圖片裝飾 (隨機選 芋頭 / 珍奶 / 鳳梨 / 櫻花)
                     const randomImg = imageAssets[Math.floor(Math.random() * imageAssets.length)];
                     decoItem = document.createElement('img');
                     decoItem.src = randomImg.src; 
                     decoItem.alt = randomImg.alt;
                     decoItem.className = 'deco-img';
-                    
-                    // 圖片讀不到時變文字
                     decoItem.onerror = function() {
                         const fallback = document.createElement('div');
                         fallback.className = 'deco-img'; 
@@ -276,19 +264,17 @@
                         fallback.textContent = this.alt;
                         this.parentNode.replaceChild(fallback, this);
                     };
-                    
                     const scale = Math.random() * 0.5 + 1.0; 
                     decoItem.style.width = (80 * scale) + 'px';
                 }
 
-                // --- 負數延遲，讓畫面一開始就滿的 ---
                 decoItem.style.left = Math.random() * 100 + '%';
                 
                 let duration;
                 if (decoItem.tagName === 'IMG') {
-                     duration = Math.random() * 6 + 12; // 圖片 12~18s
+                     duration = Math.random() * 6 + 12; 
                 } else {
-                     duration = Math.random() * 8 + 10; // CSS 10~18s
+                     duration = Math.random() * 8 + 10; 
                 }
                 decoItem.style.animationDuration = duration + 's';
 
@@ -300,7 +286,7 @@
         }
         window.addEventListener('load', initBackgroundDecorations);
 
-        // --- 2. 飲料店名單 ---
+        // --- 2. 飲料店名單 (已修正大茗為 .jpg) ---
         const shops = [
             { name: "八曜和茶", menuUrl: "./8yo.png", mapQuery: "八曜和茶 台中大甲門市" }, 
             { name: "茶聚 CHAGE", menuUrl: "./chage.jpg", mapQuery: "茶聚大甲鎮瀾店" },
@@ -311,7 +297,8 @@
             { name: "50嵐", menuUrl: "./50lan.jpg", mapQuery: "50嵐大甲店" },
             { name: "龜記茗品", menuUrl: "./guiji.jpg", mapQuery: "龜記茗品-大甲順天店" },
             { name: "得正 Oolong Tea", menuUrl: "./dejeng.jpg", mapQuery: "得正#台中大甲計劃" },
-            { name: "大茗本位製茶堂", menuUrl: "./daming.JPG", mapQuery: "大茗本位製茶堂大甲" },
+            /* 👇 修正：這裡改成 .jpg 了！ */
+            { name: "大茗本位製茶堂", menuUrl: "./daming.jpg", mapQuery: "大茗本位製茶堂大甲" },
             { name: "迷客夏 Milksha", menuUrl: "./milksha.jpg", mapQuery: "迷客夏大甲店" },
             { name: "清心福全", menuUrl: "./chingshin.jpg", mapQuery: "清心福全大甲店" }
         ];
